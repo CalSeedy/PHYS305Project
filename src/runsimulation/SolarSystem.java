@@ -160,95 +160,49 @@ public class SolarSystem {
     // method for the implementation of the Euler integration method, taking in
     // some timestep as dt
     public void stepEuler(double timestep){
-        // keep track of current body we are referencing
-        int j = 0;
-              
-        // for every body in our system/ array
-        for (Body b : objects){
-            // first initialise the acceleration, velocity and position vectors
-            // A, V, X respectively
-            double[] A = {0.,0.,0.};
-            double[] V = {0.,0.,0.};
-            double[] X = {0.,0.,0.};
-            
-            // loop over all Bodies in the system/ array
-            for (int i = 0; i < objects.length; i++){
-                
-                // make sure we aren't going to include the current Body
-                if (i != j){
-                    //System.out.println(String.format("Position: {%g, %g, %g}", X[0], X[1], X[2]));
-                    
-                    // get the other Body's mass
-                    double mass = objects[i].getMass();
-                    
-                    // calculate the distance vector from the current Body to the other Body
-                    double[] distVec = b.vectorToBody(objects[i]);
-                    
-                    // calculate the magnitude of this distance
-                    double d = magnitude(distVec);
-                    
-                    // create a factor, from the gravitational force equation
-                    // --> F(vector) = m_1*a = ((-G*m_1*m_2)/(|r|^3)) * r(vector)
-                    // --> factor = (-G*m_2)/(|r|^3) --> a(vector) = factor * r(vector)
-                    double factor = (-G*mass)/(d*d*d);
-                    
-                    
-                    //Uncomment Block below for Start position value
-                    /*
-                    System.out.println(String.format("Start: %s", b.name));
-                    System.out.println(String.format("Position: {%g, %g, %g}", objPos[0], objPos[1], objPos[2]));
-                    */
-                    
-                    
-                    // add the acceleration to its respective components
-                    A[0] += factor * distVec[0];
-                    A[1] += factor * distVec[1];
-                    A[2] += factor * distVec[2];
-                    
-                    // Euler integration at step n:
-                    // dr(vector)/dt|_(n+1) = dr(vector)/dt|_n + (d^2 r(vector)/dt^2) * dt
-                    // r(vector)|_(n+1) = r(vector)|_n + (dr(vector)/dt)|_(n+1) * dt
-                    // or --> V_new = V_current + A * dt, X_new = X_current + V_new *dt
+        
+        /*for every body:
+        loop over every OTHER body
+            add the foces acting from all other bodies / the accelelerations due to the other bodies
+            enact the foce on the body (a each time interval)
+            find the total acceleration and directeion acing on every body
+            create a list of the accelertion for each body (x,y,z)
+        update the velocities and then positions
+        */
+        
+        double[][] accelerations = new double[objects.length][3]; //inituialising an array of accelerations for the bodies
+        double[][] position1 = new double[objects.length][3]; //array of start positions
+        double[][] positions2 = new double[objects.length][3]; //array of final positions
+        double[][] v1 = new double[objects.length][3]; //array of start velocities
+        double[][] v2 = new double[objects.length][3]; //array of final velocities      
 
-                    // get the other Body's position and velocity
-                    double[] objVel = b.getVelocity();
-                    double[] objPos = b.getPosition();
-
-                    // calculate new velocity components
-                    V[0] += objVel[0] + A[0]*timestep;
-                    V[1] += objVel[1] + A[1]*timestep;
-                    V[2] += objVel[2] + A[2]*timestep;
-
-                    // calculate new position components
-                    X[0] += objPos[0] + V[0]*timestep;
-                    X[1] += objPos[1] + V[1]*timestep;
-                    X[2] += objPos[2] + V[2]*timestep;
-
-
-                    //Uncomment Block below for end position values
-                    /*
-                    System.out.println(String.format("End: %s", b.name));
-                    System.out.println(String.format("Position: {%g, %g, %g}", X[0], X[1], X[2]));
-                    */
-
-                    // update the object's velocity
-                    b.setVelocity(V[0], V[1], V[2]);
-
-                    // update the object's position
-                    b.setPosition(X[0], X[1], X[2]);
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-                
+            for (int j = 0; j < objects.length; j++){ //j will be m1
+                for (int i = 0; i < objects.length; i++){ //i will be m2
+                    if (i != j){
+                        double[] positionVec = objects[i].vectorToBody(objects[j]); //the vector between the bodies (from m2 to m1)
+                        double d = objects[i].distanceToBody(objects[j]); //distance betweem m2 and m1
+                        double factor = G*objects[i].getMass()/ (Math.pow(d, 3)); //the acceleration factor
+                        accelerations[j][0] += factor * positionVec[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                        accelerations[j][1] += factor * positionVec[1];
+                        accelerations[j][2] += factor * positionVec[2];
+                        
+                        v1[j] = objects[j].getVelocity(); //saving the initial velocity of m1
+                        position1[j] = objects[j].getPosition(); //saving the initial position of m1
+                    }
+                }                
             }
-            // increment the counter, keeping in sync with the current Body
-            j++;
+           
+    for (int i = 0; i < accelerations.length; i++){
+        v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+        v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+        v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+        
+        positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+        positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+        positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+        
+        objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+        objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
         }
     }
     
