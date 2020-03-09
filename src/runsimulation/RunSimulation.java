@@ -16,7 +16,7 @@ public class RunSimulation extends PApplet{
     @Override
     public void settings() {
         // sets the window size to 1920 x 1080 pixels (1080p)
-        size(1920, 1080);
+        size(1280, 720);
     }
     
     // create an array of file names that we want to open and display
@@ -177,7 +177,8 @@ public class RunSimulation extends PApplet{
                 }
             }*/
             
-            system.stepEuler(timestep);
+            //system.stepEuler(timestep);
+            system.stepRK4(timestep);
             
             int E_ind = system.findObjectIndex("Earth");
             double[] E_out = system.getObject(E_ind).getPosition();

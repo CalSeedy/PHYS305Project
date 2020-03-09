@@ -189,7 +189,7 @@ public class SolarSystem {
                     
                     // create a factor, from the gravitational force equation
                     // --> F(vector) = m_1*a = ((-G*m_1*m_2)/(|r|^3)) * r(vector)
-                    // --> factor = -G*m_1*m_2)/(|r|^3) --> a(vector) = factor * r(vector)
+                    // --> factor = (-G*m_2)/(|r|^3) --> a(vector) = factor * r(vector)
                     double factor = (-G*mass)/(d*d*d);
                     
                     
@@ -238,17 +238,184 @@ public class SolarSystem {
                     b.setPosition(X[0], X[1], X[2]);
                     
                 }
+                
+                
+                
+                
+                
+                
+                
+                
             }
             // increment the counter, keeping in sync with the current Body
             j++;
         }
     }
     
+    private double[] fvector(double[][] fullstate){
+        double[] fvec = new double[objects.length*8];
+        for (int i = 0; i < objects.length; i++){
+            fvec[i*8 + 0] = fullstate[i][3];
+            fvec[i*8 + 1] = fullstate[i][4];
+            fvec[i*8 + 2] = fullstate[i][5];
+            for (int j = 0; j < objects.length; j++){
+                if (i != j){
+                    //double m1 = fullstate[i][6];
+                    double m2 = fullstate[j][6];
+                    
+                    double[] r21 = {fullstate[i][0] - fullstate[j][0], fullstate[i][1] - fullstate[j][1], fullstate[i][2] - fullstate[j][2]};
+                    double d = Math.sqrt(r21[0]*r21[0] + r21[1]*r21[1] + r21[2]*r21[2]);
+        
+                    double factor = -G*m2 / (d*d*d);
+                    
+                    // a12 = -G*m1*m2 / (|r21|)^3 * r21
+                    double Ax = factor * r21[0];
+                    double Ay = factor * r21[1];
+                    double Az = factor * r21[2];
+                    
+                    
+                    fvec[i*8 + 3] = Ax;
+                    fvec[i*8 + 4] = Ay;
+                    fvec[i*8 + 5] = Az;
+                }
+            }
+        }
+        return fvec;
+    }
+    
+    /*
+    private double[] Gravity(double[] state1, double[] state2){
+        double m1 = state1[6];
+        double m2 = state2[6];
+        double[] r1 = {state1[0], state1[1], state1[2]};
+        double[] r2 = {state2[0], state2[1], state2[2]};
+        
+        double[] r21 = {state2[0]-state1[0], state2[1]-state1[1],state2[2]-state1[2]};
+        double d = Math.sqrt(r21[0]*r21[0] + r21[1]*r21[1] + r21[2]*r21[2]);
+        
+        double factor = -G*m1*m2 / (d*d*d);
+        double Fx = factor * r21[0];
+        double Fy = factor * r21[1];
+        double Fz = factor * r21[2];
+        double[] F = {Fx, Fy, Fz};
+        return F;
+    }
+    */
     
     // method for the implementation of the 4th Order Runge-Kutt integration 
     // method, taking in some timestep as dt
     public void stepRK4(double timestep){
-        // TODO: ADD 4th Order Runge-Kutta method for propogation 
+        // TODO: ADD 4th Order Runge-Kutta method for propogation
+        //double[] a = {0., 0.5, 0.5, 1.};
+        //double[] b = {1./6., 1./3., 1./3., 1./6.};
+        double[][] state_initial = new double[objects.length][8];
+        double[][] state_second, state_third, state_fourth, state_final;
+        state_second = state_third = state_fourth = state_final = state_initial;
+        int count = 0;
+        for (Body obj : objects){
+            double[] state = obj.getState();
+            state_initial[count] = state;
+            count++;
+        }
+        
+        
+        // calculating k1 and second state
+        double[] fvec1 = fvector(state_initial);
+        double[] k1 = new double[fvec1.length];
+        count = 0;
+        for (double val : fvec1){
+            k1[count] = val*timestep;
+            count++;
+        }
+        
+        count = 0;
+        for (double[] state : state_initial){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    state_second[count][i] = state[i] + 0.5*k1[count*8 + i]; 
+                } else {
+                    state_second[count][i] = state_initial[count][i];
+                }
+            }
+            count++;
+        }
+        
+        
+        // calculating k2 and the 3rd state
+        double[] fvec2 = fvector(state_second);
+        double[] k2 = new double[fvec2.length];
+        count = 0;
+        for (double val : fvec2){
+            k2[count] = val*timestep;
+            count++;
+        }
+        
+        count = 0;
+        for (double[] state : state_initial){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    state_third[count][i] = state[i] + 0.5*k2[count*8 + i]; 
+                } else {
+                    state_third[count][i] = state_initial[count][i];
+                } 
+            }
+            count++;
+        }
+        
+        
+        
+        // calculating k3 and 4th state
+        double[] fvec3 = fvector(state_third);
+        double[] k3 = new double[fvec3.length];
+        count = 0;
+        for (double val : fvec3){
+            k3[count] = val*timestep;
+            count++;
+        }
+        
+        count = 0;
+        for (double[] state : state_initial){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    state_fourth[count][i] = state[i] + k3[count*8 + i]; 
+                } else {
+                    state_fourth[count][i] = state_initial[count][i];
+                }  
+            }
+            count++;
+        }
+        
+        
+        // calculating k4 and final state
+        double[] fvec4 = fvector(state_fourth);
+        double[] k4 = new double[fvec4.length];
+        count = 0;
+        for (double val : fvec4){
+            k4[count] = val*timestep;
+            count++;
+        }
+        
+        count = 0;
+        for (double[] state : state_initial){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    state_final[count][i] = state[i] + (1./6.)*k1[count*8 + i] + (1./3.)*k2[count*8 + i] + (1./3.)*k3[count*8 + i] + (1./6.)*k4[count*8 + i]; 
+                } else {
+                    state_final[count][i] = state_initial[count][i];
+                } 
+            }
+            count++;
+        }
+        
+        count = 0;
+        for (Body obj : objects){
+            double[] new_state = state_final[count];
+            obj.setState(new_state);
+            count++;
+        }
+        
+        
+        
     }
     
     
