@@ -372,7 +372,6 @@ public class SolarSystem {
         
     }
     
-    
     // method that creates a new instance of an asteroid (which is just a Body)
     // the asteroid is generated with a random position on a unit sphere and always
     // has a velocity towards the Earth
