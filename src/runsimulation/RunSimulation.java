@@ -174,7 +174,7 @@ public class RunSimulation extends PApplet{
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         system.addObject(Jupiter); //adding Jupiter to the solar system       
         
-        Body Fatty = new Body(F_pos, F_vel,1.98847e30, 69911e3, "Fatty");
+        Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         system.addObject(Fatty); //adding Fatty to the solar system
         
         for (int i = 0; i < n; i++){
