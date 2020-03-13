@@ -1,18 +1,17 @@
 package runsimulation;
 
+import java.util.Dictionary;
 import java.util.Random;
 
 // SolarSystem class manages all the objects that are inside the system,
 // handles the addition/removal of any objects and has the responsibility
 // of stepping all objects forward by 1 timestep with either Euler or RK4.
-public class SolarSystem {
+public class SolarSystem{
     
-    final static double G = 6.67e-11;   // Create a const. for G in SI [m]^3 [kg]^-1 [s]^-2 
+    final static double G = 6.67e-11; // Create a const. for G in SI [m]^3 [kg]^-1 [s]^-2 
     
-    private Body[] objects;             // store a array of all bodies in the system
-    private long astNum;                // Numbers of asteroids
-    
-    
+    private Body[] objects;         // store a array of all bodies in the system
+    private int astNum = 0;         // store number of asteroids in the system
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
     public SolarSystem(){
@@ -29,8 +28,6 @@ public class SolarSystem {
         
         // overwrite the null array
         objects = new_objects;
-        
-        astNum = 0;
     }
     
     
@@ -46,7 +43,7 @@ public class SolarSystem {
         
         // copy over the current Bodies to the new array
         for(int i = 0; i < current.length; i++){
-            new_objects[i] = current[i];           
+            new_objects[i]= current[i];           
         }
         // add the new Body
         new_objects[current.length] = new_Body;
@@ -86,12 +83,12 @@ public class SolarSystem {
     
     // getter for the array of objects
     public Body[] getObjects(){
-        return objects;
+        return objects; //returns whole list
     }
     
     // getter for a specific Body at some index
     public Body getObject(int index){
-        return objects[index];
+        return objects[index]; //retun the single body
     }
     
     // private method to return the magnitude of a 3D vector
@@ -153,106 +150,64 @@ public class SolarSystem {
         // if we reach the end, the "identifier" wasn't able to be matched with
         // any of the names of the Bodies, we should then return some easily handled
         // value for the index. -1 will throw an ArrayIndexOutOfBounds exception.
-        return -1;
+        return -1; //so you know it hasn't worked
     }
     
     
     // method for the implementation of the Euler integration method, taking in
     // some timestep as dt
     public void stepEuler(double timestep){
-        // keep track of current body we are referencing
-        int j = 0;
-              
-        // for every body in our system/ array
-        for (Body b : objects){
-            // first initialise the acceleration, velocity and position vectors
-            // A, V, X respectively
-            double[] A = {0.,0.,0.};
-            double[] V = {0.,0.,0.};
-            double[] X = {0.,0.,0.};
-            
-            // loop over all Bodies in the system/ array
-            for (int i = 0; i < objects.length; i++){
-                
-                // make sure we aren't going to include the current Body
-                if (i != j){
-                    //System.out.println(String.format("Position: {%g, %g, %g}", X[0], X[1], X[2]));
-                    
-                    // get the other Body's mass
-                    double mass = objects[i].getMass();
-                    
-                    // calculate the distance vector from the current Body to the other Body
-                    double[] distVec = b.vectorToBody(objects[i]);
-                    
-                    // calculate the magnitude of this distance
-                    double d = magnitude(distVec);
-                    
-                    // create a factor, from the gravitational force equation
-                    // --> F(vector) = m_1*a = ((-G*m_1*m_2)/(|r|^3)) * r(vector)
-                    // --> factor = (-G*m_2)/(|r|^3) --> a(vector) = factor * r(vector)
-                    double factor = (-G*mass)/(d*d*d);
-                    
-                    
-                    //Uncomment Block below for Start position value
-                    /*
-                    System.out.println(String.format("Start: %s", b.name));
-                    System.out.println(String.format("Position: {%g, %g, %g}", objPos[0], objPos[1], objPos[2]));
-                    */
-                    
-                    
-                    // add the acceleration to its respective components
-                    A[0] += factor * distVec[0];
-                    A[1] += factor * distVec[1];
-                    A[2] += factor * distVec[2];
-                    
-                    // Euler integration at step n:
-                    // dr(vector)/dt|_(n+1) = dr(vector)/dt|_n + (d^2 r(vector)/dt^2) * dt
-                    // r(vector)|_(n+1) = r(vector)|_n + (dr(vector)/dt)|_(n+1) * dt
-                    // or --> V_new = V_current + A * dt, X_new = X_current + V_new *dt
+        
+        /*for every body:
+        loop over every OTHER body
+            add the foces acting from all other bodies / the accelelerations due to the other bodies
+            enact the foce on the body (a each time interval)
+            find the total acceleration and directeion acing on every body
+            create a list of the accelertion for each body (x,y,z)
+        update the velocities and then positions
+        */
+        
+        double[][] accelerations = new double[objects.length][3]; //inituialising an array of accelerations for the bodies
+        double[][] position1 = new double[objects.length][3]; //array of start positions
+        double[][] positions2 = new double[objects.length][3]; //array of final positions
+        double[][] v1 = new double[objects.length][3]; //array of start velocities
+        double[][] v2 = new double[objects.length][3]; //array of final velocities      
 
-                    // get the other Body's position and velocity
-                    double[] objVel = b.getVelocity();
-                    double[] objPos = b.getPosition();
-
-                    // calculate new velocity components
-                    V[0] += objVel[0] + A[0]*timestep;
-                    V[1] += objVel[1] + A[1]*timestep;
-                    V[2] += objVel[2] + A[2]*timestep;
-
-                    // calculate new position components
-                    X[0] += objPos[0] + V[0]*timestep;
-                    X[1] += objPos[1] + V[1]*timestep;
-                    X[2] += objPos[2] + V[2]*timestep;
-
-
-                    //Uncomment Block below for end position values
-                    /*
-                    System.out.println(String.format("End: %s", b.name));
-                    System.out.println(String.format("Position: {%g, %g, %g}", X[0], X[1], X[2]));
-                    */
-
-                    // update the object's velocity
-                    b.setVelocity(V[0], V[1], V[2]);
-
-                    // update the object's position
-                    b.setPosition(X[0], X[1], X[2]);
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-                
+        //loops over every body and every other body:
+            for (int j = 0; j < objects.length; j++){ //j will be m1
+                for (int i = 0; i < objects.length; i++){ //i will be m2
+                    if (i != j){
+                        double[] positionVec = objects[i].vectorToBody(objects[j]); //the vector between the bodies (from m2 to m1)
+                        double d = objects[i].distanceToBody(objects[j]); //distance betweem m2 and m1
+                        double factor = G*objects[i].getMass()/ (Math.pow(d, 3)); //the acceleration factor
+                        accelerations[j][0] += factor * positionVec[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                        accelerations[j][1] += factor * positionVec[1];
+                        accelerations[j][2] += factor * positionVec[2];
+                        
+                        v1[j] = objects[j].getVelocity(); //saving the initial velocity of m1
+                        position1[j] = objects[j].getPosition(); //saving the initial position of m1
+                    }
+                }                
             }
-            // increment the counter, keeping in sync with the current Body
-            j++;
+           
+        for (int i = 0; i < accelerations.length; i++){
+            v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+            v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+            v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+
+            positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+            positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+            positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+
+            objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+            objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
         }
-    }
-    
+    }    
+            
     private double[] fvector(double[][] fullstate){
+        
+        double[][] accelerations = new double[objects.length][3]; //inituialising an array of accelerations for the bodies
+        
         double[] fvec = new double[objects.length*8];
         for (int i = 0; i < objects.length; i++){
             fvec[i*8 + 0] = fullstate[i][3];
@@ -268,49 +223,80 @@ public class SolarSystem {
         
                     double factor = -G*m2 / (d*d*d);
                     
-                    // a12 = -G*m1*m2 / (|r21|)^3 * r21
-                    double Ax = factor * r21[0];
-                    double Ay = factor * r21[1];
-                    double Az = factor * r21[2];
+                    // a12 = -G*m2 / (|r21|)^3 * r21
+                    
+                    accelerations[i][0] += factor * r21[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                    accelerations[i][1] += factor * r21[1];
+                    accelerations[i][2] += factor * r21[2];
                     
                     
-                    fvec[i*8 + 3] = Ax;
-                    fvec[i*8 + 4] = Ay;
-                    fvec[i*8 + 5] = Az;
                 }
             }
+        }
+        
+        for (int i = 0; i < accelerations.length; i++){
+            fvec[i*8 + 3] = accelerations[i][0];
+            fvec[i*8 + 4] = accelerations[i][1];
+            fvec[i*8 + 5] = accelerations[i][2];
         }
         return fvec;
     }
     
-    /*
-    private double[] Gravity(double[] state1, double[] state2){
-        double m1 = state1[6];
-        double m2 = state2[6];
-        double[] r1 = {state1[0], state1[1], state1[2]};
-        double[] r2 = {state2[0], state2[1], state2[2]};
+    private double[] calculateK(double[][] state, double dt){
+        double[] fvec = fvector(state);
+        double[] k = new double[fvec.length];
+        int count = 0;
+        for (double val : fvec){
+            k[count] = val*dt/2;
+            count++;
+        }
         
-        double[] r21 = {state2[0]-state1[0], state2[1]-state1[1],state2[2]-state1[2]};
-        double d = Math.sqrt(r21[0]*r21[0] + r21[1]*r21[1] + r21[2]*r21[2]);
+        return k;
         
-        double factor = -G*m1*m2 / (d*d*d);
-        double Fx = factor * r21[0];
-        double Fy = factor * r21[1];
-        double Fz = factor * r21[2];
-        double[] F = {Fx, Fy, Fz};
-        return F;
     }
-    */
+    
+    private double[][] nextState(double[][] initial, double[][] other, double[] k, int step){
+        double multiple;
+        switch(step){
+            
+            case 0:
+                multiple = 0.0;
+            case 1:
+                multiple = 0.5;
+            case 2:
+                multiple = 0.5;
+            case 3:
+                multiple = 1.0;
+                
+            default:
+                multiple = 0.0;
+                
+        }
+        
+        int count = 0;
+        double[][] output = new double[initial.length][initial[0].length];
+        for (double[] state : other){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    output[count][i] = state[i] + multiple*k[count*8 + i]; 
+                } else {
+                    output[count][i] = initial[count][i];
+                }
+            }
+            count++;
+        }
+        
+        return output;
+    }
+    
     
     // method for the implementation of the 4th Order Runge-Kutt integration 
     // method, taking in some timestep as dt
     public void stepRK4(double timestep){
         // TODO: ADD 4th Order Runge-Kutta method for propogation
-        //double[] a = {0., 0.5, 0.5, 1.};
-        //double[] b = {1./6., 1./3., 1./3., 1./6.};
         double[][] state_initial = new double[objects.length][8];
-        double[][] state_second, state_third, state_fourth, state_final;
-        state_second = state_third = state_fourth = state_final = state_initial;
+        //double[][] state_second, state_third, state_fourth, state_final;
+        //state_second = state_third = state_fourth = state_final = state_initial;
         int count = 0;
         for (Body obj : objects){
             double[] state = obj.getState();
@@ -320,86 +306,29 @@ public class SolarSystem {
         
         
         // calculating k1 and second state
-        double[] fvec1 = fvector(state_initial);
-        double[] k1 = new double[fvec1.length];
-        count = 0;
-        for (double val : fvec1){
-            k1[count] = val*timestep;
-            count++;
-        }
-        
-        count = 0;
-        for (double[] state : state_initial){
-            for (int i = 0; i < state.length; i++){
-                if (i != 6 || i != 7){
-                    state_second[count][i] = state[i] + 0.5*k1[count*8 + i]; 
-                } else {
-                    state_second[count][i] = state_initial[count][i];
-                }
-            }
-            count++;
-        }
-        
+        double[] k1 = calculateK(state_initial, timestep);
+        double[][] state_second = nextState(state_initial, state_initial, k1, 1);
+
         
         // calculating k2 and the 3rd state
-        double[] fvec2 = fvector(state_second);
-        double[] k2 = new double[fvec2.length];
-        count = 0;
-        for (double val : fvec2){
-            k2[count] = val*timestep;
-            count++;
-        }
-        
-        count = 0;
-        for (double[] state : state_initial){
-            for (int i = 0; i < state.length; i++){
-                if (i != 6 || i != 7){
-                    state_third[count][i] = state[i] + 0.5*k2[count*8 + i]; 
-                } else {
-                    state_third[count][i] = state_initial[count][i];
-                } 
-            }
-            count++;
-        }
-        
+        double[] k2 = calculateK(state_second, timestep);
+        double[][] state_third = nextState(state_initial, state_second, k2, 2);
         
         
         // calculating k3 and 4th state
-        double[] fvec3 = fvector(state_third);
-        double[] k3 = new double[fvec3.length];
-        count = 0;
-        for (double val : fvec3){
-            k3[count] = val*timestep;
-            count++;
-        }
-        
-        count = 0;
-        for (double[] state : state_initial){
-            for (int i = 0; i < state.length; i++){
-                if (i != 6 || i != 7){
-                    state_fourth[count][i] = state[i] + k3[count*8 + i]; 
-                } else {
-                    state_fourth[count][i] = state_initial[count][i];
-                }  
-            }
-            count++;
-        }
+        double[] k3 = calculateK(state_third, timestep);
+        double[][] state_fourth = nextState(state_initial, state_third, k2, 3);
         
         
         // calculating k4 and final state
-        double[] fvec4 = fvector(state_fourth);
-        double[] k4 = new double[fvec4.length];
-        count = 0;
-        for (double val : fvec4){
-            k4[count] = val*timestep;
-            count++;
-        }
+        double[] k4 = calculateK(state_fourth, timestep);
         
+        double[][] state_final = new double[state_initial.length][state_initial[0].length];
         count = 0;
         for (double[] state : state_initial){
             for (int i = 0; i < state.length; i++){
                 if (i != 6 || i != 7){
-                    state_final[count][i] = state[i] + (1./6.)*k1[count*8 + i] + (1./3.)*k2[count*8 + i] + (1./3.)*k3[count*8 + i] + (1./6.)*k4[count*8 + i]; 
+                    state_final[count][i] = state[i] + (1./6.)*k1[count * state.length + i] + (1./3.)*k2[count*state.length + i] + (1./3.)*k3[count*state.length + i] + (1./6.)*k4[count*state.length + i]; 
                 } else {
                     state_final[count][i] = state_initial[count][i];
                 } 
@@ -417,7 +346,6 @@ public class SolarSystem {
         
         
     }
-    
     
     // method that creates a new instance of an asteroid (which is just a Body)
     // the asteroid is generated with a random position on a unit sphere and always

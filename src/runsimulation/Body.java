@@ -56,12 +56,6 @@ public class Body {
     }
     
     // getter mehtod to return all values in a 1D array, execpt for the name (arbitrarily) 
-    
-    
-    
-    
-    
-    
     public double[] getState(){
         double[] state = {position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], mass, radius};
         return state;

@@ -1,3 +1,4 @@
+    
 package runsimulation;
 
 import java.io.BufferedReader;
@@ -20,7 +21,7 @@ public class RunSimulation extends PApplet{
     }
     
     // create an array of file names that we want to open and display
-    String[] files = {"Earth_data.csv"};//, "Jupiter_data.csv};
+    String[] files = {"Sun_data.csv","Earth_data.csv","Jupiter_data.csv","Fatty_data.csv"};
 
     // create a 3D array of positions for the 10000 steps, for each file
     float[][][] pos = new float[10000][files.length][3];
@@ -95,11 +96,6 @@ public class RunSimulation extends PApplet{
             // translate the origin of the screen to the centre (rather than the top left)
             translate(width/2.0f, height/2.0f);
             // set the stroke weight (i.e. the outlining) to 0
-            strokeWeight(0);
-            // set the fill colour to be yellow-ish
-            fill(200, 154, 0); // fill(red, green, blue, alpha)
-            // create an ellipse at (x = 0, y = 0), with both radii of 10 pixels
-            ellipse(0, 0, 10, 10); // ellipse(x, y, horizontal radius, vertical radius)
             
             // for every object (other than the Sun)
             for (int i = 0; i < files.length; i++){
@@ -113,14 +109,21 @@ public class RunSimulation extends PApplet{
                 
                 // set stroke weight to be 0 again, to make it affect the current drawn object
                 strokeWeight(0);
+                if (name.equals("Sun")){
+                    fill(200, 154, 0);
+                    ellipse(xpos, -ypos, 10, 10);
+                } else {
+                 // fill(red, green, blue, alpha)
                 // set the fill colour to be black
-                fill(0, 0, 0);
+                    fill(0, 0, 0);
+                    ellipse(xpos, -ypos, 10, 10);
+                }
                 // set the text size
                 textSize(14);
                 // add some text 10 pixels, and 30 degrees, away from the start of the ellipse
-                text(String.format("%s", name), (int)(xpos + 10*Math.cos((float)Math.PI/4.)), (int)(ypos + 10*Math.sin((float)Math.PI/4.)));
+                text(String.format("%s", name), (int)(xpos + 10*Math.cos((float)Math.PI/4.)), (int)(-ypos - 10*Math.sin((float)Math.PI/4.)));
                 // create an ellipse at x=xpos and y=ypos with a radius of 10 pixels
-                ellipse(xpos, ypos, 10, 10);
+                
             }
             // after we display each object, increment the step we are on
             a++;
@@ -133,35 +136,52 @@ public class RunSimulation extends PApplet{
     }
     
     public static void main(String[] args) {
-        int n = 10000;
-        double timestep = (86400.)/2.;
+        int n = 10000; // number of steps
+        double timestep = (86400.)/2.; //1/2 a day is s
         
-        SolarSystem system = new SolarSystem();
-        
-        double[] E_pos = {1.495978707e11, 0., 0.};
-        double[] E_vel = {0., 29.78e3, 0.};
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth");
-        system.addObject(Earth);
+        SolarSystem system = new SolarSystem(); //initialising the solar system. Ceating a box
+        Data storeSunPos = new Data(n, timestep);
+        Data storeEarthPos = new Data(n, timestep); // where the Earth data will go
+        Data storeJupiterPos = new Data(n, timestep); 
+        Data storeFattyPos = new Data(n, timestep); //fat planet
         
         /*
-        double[] J_pos = {4.*1.495978707e11, 0., 0.};
-        double[] J_vel = {0., 2.*29.78e3, 0.};
-        Body Jupiter = new Body(J_pos, J_vel, 10.*5.9722e24, 10.*6371e3, "Jupiter");
-        system.addObject(Jupiter);
-        */
+        Random r = new Random();
+        for (int i = 0; i < 10; i++){
+            double[] pos = {r.nextDouble()*(10+10) - 10,
+                            r.nextDouble()*(10+10) - 10,
+                            r.nextDouble()*(10+10) - 10};
+            double[] vel = {r.nextDouble()*(10+10) - 10,
+                            r.nextDouble()*(10+10) - 10,
+                            r.nextDouble()*(10+10) - 10};
+            String name = String.format("Object%d", i);
+            Body bod = new Body(pos, vel, 0., 0, name);
+            system.addObject(bod);
+        }*/
         
-        Data storeEarthPos = new Data(n, timestep);
-        //Data storeJupiterPos = new Data(n, timestep);
+        double[] E_pos = {1.495978707e11, 0., 0.}; //position of Earth m = radius or orbit
+        double[] E_vel = {0., 29.78e3, 0.}; 
         
+        double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
+        double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
+        
+        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
+        double[] F_vel = {0., 20e3, 0.};        
+             
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
+        system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
+        
+        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
+        system.addObject(Jupiter); //adding Jupiter to the solar system       
+        
+        Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
+        system.addObject(Fatty); //adding Fatty to the solar system
         
         for (int i = 0; i < n; i++){
-            // REMOVE THE BELOW COMMENT BLOCK TO OUTPUT ALL OBJECT POSITION DATA, AT EACH TIMESTEP.
-            // WARNING: SIMULATION BECOMES EXTREMELY SLOW
             /*
             if (i % 1000 == 0){
                 System.out.println(i);
             }
-            
             for (Body object : system.getObjects()){
                 
                 
@@ -176,21 +196,40 @@ public class RunSimulation extends PApplet{
                 );
                 }
             }*/
+            //system.stepEuler(timestep); //step using Euler
+            system.stepRK4(timestep); //step using Euler
+            //put NEW for loop here
+            //for (int j = 0; j < system.getObjects().length-1; j++)){
+            //double[] out = system.getObject(j).getPosition(); //for every j value, find the corresponding object
+            //then store the data in an appropriate array
+            //change Data.java class to put all orbits in one array
+            //for the time being, just store them individually and save o individual csvs
+            //}
             
-            //system.stepEuler(timestep);
-            system.stepRK4(timestep);
+            int S_ind = system.findObjectIndex("Sun"); //find where the object is in the list
+            double[] S_out = system.getObject(S_ind).getPosition(); //find where it is in the solar system 
+            storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
             
-            int E_ind = system.findObjectIndex("Earth");
-            double[] E_out = system.getObject(E_ind).getPosition();
-            storeEarthPos.addData(E_out[0], E_out[1], E_out[2], i);
-            //int J_ind = system.findObjectIndex("Jupiter");
-            //double[] J_out = system.getObject(J_ind).getPosition();
-            //storeEarthPos.addData(J_out[0], J_out[1], J_out[2], i);
+            
+            int E_ind = system.findObjectIndex("Earth"); //find where the object is in the list
+            double[] E_out = system.getObject(E_ind).getPosition(); //find where it is in the solar system 
+            storeEarthPos.addData(E_out[0], E_out[1], E_out[2], i); //store the (x,y,z) coordinates
+            
+            int J_ind = system.findObjectIndex("Jupiter");
+            double[] J_out = system.getObject(J_ind).getPosition();
+            storeJupiterPos.addData(J_out[0], J_out[1], J_out[2], i);
+
+            int F_ind = system.findObjectIndex("Fatty");
+            double[] F_out = system.getObject(F_ind).getPosition();
+            storeFattyPos.addData(F_out[0], F_out[1], F_out[2], i);            
+            //end NEW loop
         }
         
         //storeEarthPos.output();
+        storeSunPos.writeToCSV("Sun_data.csv");
         storeEarthPos.writeToCSV("Earth_data.csv");
-        //storeJupiterPos.writeToCSV("Jupiter_data.csv");
+        storeJupiterPos.writeToCSV("Jupiter_data.csv");
+        storeFattyPos.writeToCSV("Fatty_data.csv");
         
         // show the applet where our methods are, to help it find the settings, setup and draw methods
         PApplet.main(new String[]{runsimulation.RunSimulation.class.getName()});

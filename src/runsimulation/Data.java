@@ -57,11 +57,19 @@ public class Data {
         }
         
         // First, write out the first line (the column headings for the CSV)
-        outputFile.println("t [days], x [Au], y [Au], z [Au]");
+        outputFile.println("t [days], x [Au], y [Au], z [Au]"); 
+        
+        //add a loop for x, y and z to include and index, string.fomat
+        //start NEW loop
+        //outputFile.print("x % [Au], y % [Au], z % [Au]"); // put indexes in at % signs, string.format
+        
         // Now make a loop to write the contents of the data to a CSV.
         for (int n = 0; n < positions.length; n++) {
             outputFile.println(times[n]/86400 + "," + positions[n][0]/ (148.28e9) + "," + positions[n][1]/ (148.28e9) + "," + positions[n][2]/ (148.28e9));
-        }
+        } //also do stuff to this with indexes
+        
+        //end NEW loop
+        
         outputFile.close(); // close the outputFile (stream)
     } 
     
