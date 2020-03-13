@@ -21,7 +21,7 @@ public class RunSimulation extends PApplet{
     }
     
     // create an array of file names that we want to open and display
-    String[] files = {"Sun_data.csv","Earth_data.csv","Fatty_data.csv", "Jupiter_data.csv"};
+    String[] files = {"Sun_data.csv","Earth_data.csv","Jupiter_data.csv","Fatty_data.csv"};
 
     // create a 3D array of positions for the 10000 steps, for each file
     float[][][] pos = new float[10000][files.length][3];
@@ -168,13 +168,13 @@ public class RunSimulation extends PApplet{
         double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
         double[] F_vel = {0., 20e3, 0.};        
              
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //star position and velocity, mass and object radius, "name"
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
         
-        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911, "Jupiter");
+        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         system.addObject(Jupiter); //adding Jupiter to the solar system       
         
-        Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911, "Fatty");
+        Body Fatty = new Body(F_pos, F_vel,1.98847e30, 69911e3, "Fatty");
         system.addObject(Fatty); //adding Fatty to the solar system
         
         for (int i = 0; i < n; i++){
@@ -196,8 +196,8 @@ public class RunSimulation extends PApplet{
                 );
                 }
             }*/
-            system.stepEuler(timestep); //step using Euler
-            
+            //system.stepEuler(timestep); //step using Euler
+            system.stepRK4(timestep); //step using Euler
             //put NEW for loop here
             //for (int j = 0; j < system.getObjects().length-1; j++)){
             //double[] out = system.getObject(j).getPosition(); //for every j value, find the corresponding object
