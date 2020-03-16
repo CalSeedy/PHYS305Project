@@ -1,9 +1,10 @@
-package runsimulation;
 
+package runsimulation;
+import java.util.ArrayList;
 // SolarSystem class manages all the objects that are inside the system,
 // handles the addition/removal of any objects and has the responsibility
 // of stepping all objects forward by 1 timestep with either Euler or RK4.
-public class SolarSystem {
+public class SolarSystem2 {
     
     final static double G = 6.67e-11; // Create a const. for G in SI [m]^3 [kg]^-1 [s]^-2 
     
@@ -11,7 +12,7 @@ public class SolarSystem {
     
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
-    public SolarSystem(){
+    public SolarSystem2(){
         // when creating a new solar system, create a "Sun" at the centre
         Body[] new_objects = new Body[1];   // initialise a new array of Bodies of length = 1
         double[] S_pos = {0., 0., 0.};      // define the position vector (origin for Sun)
@@ -154,101 +155,97 @@ public class SolarSystem {
     // method for the implementation of the Euler integration method, taking in
     // some timestep as dt
     public void stepEuler(double timestep){
-        // keep track of current body we are referencing
-        int j = 0;
         
-        // for every body in our system/ array
-        for (Body b : objects){
-            
-            
-            // loop over all Bodies in the system/ array
-            for (int i = 0; i < objects.length; i++){
-                // first initialise the acceleration, velocity and position vectors
-                // A, V, X respectively
-                double[] A = {0.,0.,0.}; //acceleration
-                double[] V = {0.,0.,0.}; //velocity
-                double[] X = {0.,0.,0.}; //position
-                
-                // make sure we aren't going to include the current Body ie it doesn't interact with itself
-                if (i != j){
-                    
-                    //System.out.println(String.format("Position: {%g, %g, %g}", X[0], X[1], X[2]));
-                    
-                    double mass = objects[i].getMass(); //get the other Body's mass
-                    
-                    // calculate the distance vector from the current Body to the other Body
-                    double[] distVec = b.vectorToBody(objects[i]);
-                    
-                    // calculate the magnitude of this distance
-                    double d = magnitude(distVec);
-                    
-                    // create a factor, from the gravitational force equation
-                    // --> F(vector) = m_1*a = ((-G*m_1*m_2)/(|r|^3)) * r(vector)
-                    // --> factor = -G*m_1*m_2)/(|r|^3) --> a(vector) = factor * r(vector)
-                    double factor = (-G*mass)/(d*d*d); //acceleration factor
-                    
-                    // get the other Body's position and velocity
-
-                    
-                    //Uncomment Block below for Start position value
-                    /*
-                    System.out.println(String.format("Start: %s", b.name));
-                    System.out.println(String.format("Position: {%g, %g, %g}", objPos[0], objPos[1], objPos[2]));
-                    */
-                    
-                    
-                    // add the acceleration to its respective components
-                    A[0] += factor * distVec[0];
-                    A[1] += factor * distVec[1];
-                    A[2] += factor * distVec[2];
-                    
-                }
-                    double[] objVel = b.getVelocity();
-                    double[] objPos = b.getPosition(); 
-                    
-                    // Euler integration at step n:
-                    // dr(vector)/dt|_(n+1) = dr(vector)/dt|_n + (d^2 r(vector)/dt^2) * dt
-                    // r(vector)|_(n+1) = r(vector)|_n + (dr(vector)/dt)|_(n+1) * dt
-                    // or --> V_new = V_current + A * dt, X_new = X_current + V_new *dt
-                    
-                    //put this part outside of the loop
-                    // calculate new velocity components
-                    V[0] += objVel[0] + A[0]*timestep;
-                    V[1] += objVel[1] + A[1]*timestep;
-                    V[2] += objVel[2] + A[2]*timestep;
-                    
-                    // calculate new position components
-                    X[0] += objPos[0] + V[0]*timestep;
-                    X[1] += objPos[1] + V[1]*timestep;
-                    X[2] += objPos[2] + V[2]*timestep;
-                    
-                    // update the object's position
-                    b.setPosition(X[0], X[1], X[2]);
-                    
-                    // update the object's velocity
-                    b.setVelocity(V[0], V[1], V[2]);
-                    
-                    //Uncomment Block below for end position values
-                    /*
-                    System.out.println(String.format("End: %s", b.name));
-                    System.out.println(String.format("Position: {%g, %g, %g}", X[0], X[1], X[2]));
-                    */
-                
-            }
-            // increment the counter, keeping in sync with the current Body
-            j++;
-        }
-    }
-    
-    /*for every body:
+        /*for every body:
         loop over every OTHER body
             add the foces acting from all other bodies / the accelelerations due to the other bodies
             enact the foce on the body (a each time interval)
             find the total acceleration and directeion acing on every body
             create a list of the accelertion for each body (x,y,z)
-    update the velocities and then positions
-*/
-            
+        update the velocities and then positions
+        */
+        
+        double[][] accelerations = new double[objects.length][3]; //inituialising an array of accelerations for the bodies
+        double[][] position1 = new double[objects.length][3]; //array of start positions
+        double[][] positions2 = new double[objects.length][3]; //array of final positions
+        double[][] v1 = new double[objects.length][3]; //array of start velocities
+        double[][] v2 = new double[objects.length][3]; //array of final velocities      
+
+        //loops over every body and every other body:
+            for (int j = 0; j < objects.length; j++){ //j will be m1
+                for (int i = 0; i < objects.length; i++){ //i will be m2
+                    if (i != j){
+                        double[] positionVec = objects[i].vectorToBody(objects[j]); //the vector between the bodies (from m2 to m1)
+                        double d = objects[i].distanceToBody(objects[j]); //distance betweem m2 and m1
+                        double factor = G*objects[i].getMass()/ (Math.pow(d, 3)); //the acceleration factor
+                        accelerations[j][0] += factor * positionVec[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                        accelerations[j][1] += factor * positionVec[1];
+                        accelerations[j][2] += factor * positionVec[2];
+                        
+                        v1[j] = objects[j].getVelocity(); //saving the initial velocity of m1
+                        position1[j] = objects[j].getPosition(); //saving the initial position of m1
+                    }
+                }                
+            }
+           
+    for (int i = 0; i < accelerations.length; i++){
+        v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+        v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+        v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+        
+        positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+        positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+        positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+        
+        objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+        objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
+        }
+    }    
+      
+    
+    public void Hit(){
+        int [] hits = new int[objects.length]; //will store the number of hits on each object
+        
+        for (int j = 0; j < objects.length; j++){
+            for (int i = 0; i < objects.length; i++){
+                double d = objects[i].distanceToBody(objects[j]);
+                double radii = objects[i].getRadius() + objects[j].getRadius();
+                if ( d <= radii){
+                    
+                    double m1 = objects[i].getMass();
+                    double m2 = objects[j].getMass();
+                    
+                    if (m1 / m2 > Math.pow(10,6)) { //if m2 is much smaller than m1
+                        //m2 will merge with m1 and transfer its momentum to m1
+
+                        double[] momentum1 = objects[i].getMomentum();
+                        double[] momentum2 = objects[j].getMomentum();
+                        double[] new_momentum =  {0.,0.,0.};
+                        new_momentum[0] = momentum1[0]+momentum2[0];
+                        new_momentum[1] = momentum1[1]+momentum2[1];
+                        new_momentum[2] = momentum1[2]+momentum2[2];
+                    
+                        double new_mass = objects[i].getMass()+objects[j].getMass();
+                    
+                        String name1 = objects[j].getName(); //the names of the objects which have collided
+                        String name2 = objects[i].getName();
+                        objects[j].updateMass(objects[i].getMass());
+                        objects[j].updateVelocity(new_momentum);
+                        removeObject(i);
+
+                        hits[j] ++;
+                        hits[i] ++;
+                    
+                    //update the mass and momentum x of the first body to include the mass of the second
+                    //update the speed of the first body
+                    //delete the seocnd body
+                    //record what body hit what
+                    //or should I just delete the body with 'asteroid' in its name??
+                    }
+                }
+            }
+        }
+    }
     
     // method for the implementation of the 4th Order Runge-Kutt integration 
     // method, taking in some timestep as dt
