@@ -7,7 +7,7 @@ public class RunSimulation {
         int n = 10000; // number of steps
         double timestep = (86400.)/2.; //1/2 a day is s
         
-        SolarSystem2 system = new SolarSystem2(); //initialising the solar system. Ceating a box
+        SolarSystem system = new SolarSystem(); //initialising the solar system. Ceating a box
         Data storeEarthPos = new Data(n, timestep); // where the Earth data will go
         Data storeJupiterPos = new Data(n, timestep); 
         Data storeFattyPos = new Data(n, timestep); //fat planet
