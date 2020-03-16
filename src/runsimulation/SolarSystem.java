@@ -214,7 +214,7 @@ public class SolarSystem{
             fvec[i*8 + 1] = fullstate[i][4];
             fvec[i*8 + 2] = fullstate[i][5];
             for (int j = 0; j < objects.length; j++){
-                if (i != j){
+                if ((i != j) && objects[i].name.contains("Asteroid") && !objects[j].name.contains("Asteroid")){
                     //double m1 = fullstate[i][6];
                     double m2 = fullstate[j][6];
                     
@@ -230,6 +230,24 @@ public class SolarSystem{
                     accelerations[i][2] += factor * r21[2];
                     
                     
+                } else if ((i != j) && !objects[i].name.contains("Asteroid") && !objects[j].name.contains("Asteroid")){
+                    double m2 = fullstate[j][6];
+                    
+                    double[] r21 = {fullstate[i][0] - fullstate[j][0], fullstate[i][1] - fullstate[j][1], fullstate[i][2] - fullstate[j][2]};
+                    double d = Math.sqrt(r21[0]*r21[0] + r21[1]*r21[1] + r21[2]*r21[2]);
+        
+                    double factor = -G*m2 / (d*d*d);
+                    
+                    // a12 = -G*m2 / (|r21|)^3 * r21
+                    
+                    accelerations[i][0] += factor * r21[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                    accelerations[i][1] += factor * r21[1];
+                    accelerations[i][2] += factor * r21[2];
+                
+                } else {
+                    accelerations[i][0] += 0.; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                    accelerations[i][1] += 0.;
+                    accelerations[i][2] += 0.;
                 }
             }
         }
@@ -413,5 +431,65 @@ public class SolarSystem{
         addObject(ast);
         astNum++; 
     }
+    
+    // method that creates a new instance of an asteroid (which is just a Body)
+    // the asteroid is generated with a random position on a unit sphere and always
+    // has a velocity towards the Earth
+    public void generateAsteroidLine(double x_in, double y_in, double z_in, int thickness, int N, boolean target){
+        /*
+        // Find the object that is the furthest away (that isnt an asteroid)
+        double furthest = 0.;
+        for (Body b : objects){
+            double[] pos = b.getPosition();
+            double distance = magnitude(pos);
+            if ((distance > furthest) && !(b.name.contains("Asteroid"))){
+                furthest = distance;
+            }
+        }
+        */
+        Random rand = new Random();
+        for (int i = 0; i < N; i++){
+            double x, y, z;
+            x = x_in - rand.nextDouble()*(thickness*148.28e7);
+            y = y_in - rand.nextDouble()*(2.*7.78574E11);
+            z = z_in; // can do same as above but with some "width/height"
+            
+            double[] a_pos = {x, y, z};
+            double[] a_vel = {0., 0., 0.};
+            double vx, vy, vz;
+
+            if (target){
+                // Find out where the Earth is
+                int ind = findObjectIndex("Earth");
+                Body E = getObject(ind);
+                double[] E_pos = E.getPosition();
+
+                // create a velocity such that the asteroid heads towards Earth
+                vx = (((x - E_pos[0])) * rand.nextGaussian() + ((x - E_pos[0]))/100) / 1e3;
+                vy = (((y - E_pos[1])) * rand.nextGaussian() + ((x - E_pos[1]))/100) / 1e3;
+                vz = (((z - E_pos[2])) * rand.nextGaussian() + ((x - E_pos[2]))/100) / 1e3;
+                a_vel[0] = vx;
+                a_vel[1] = vy;
+                a_vel[2] = vz;
+            } else {
+                vx = -1.7e4;
+                a_vel[0] = vx;
+            }
+            
+            // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
+            double a_radius = rand.nextGaussian()*33. + 50.;
+            
+            // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
+            // Volume of a sphere = 4/3 * PI * r^3
+            double a_mass = 9e8;//5e3 * (4./3.) * Math.PI * a_radius * a_radius * a_radius;
+            Body ast = new Body(a_pos, a_vel, a_mass, a_radius, String.format("Asteroid%d", astNum));
+            
+            // add the asteroid to the system and increment the number of asteroids
+            addObject(ast);
+            astNum++; 
+            
+        }
+    }
+    
     
 }
