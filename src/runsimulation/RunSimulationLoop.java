@@ -10,7 +10,7 @@ import java.util.Random;
 
 // add "extends PApplet" to make our class an extension of PApplet, which lets us call their methods
 // and inherit all their properties
-public class RunSimulation extends PApplet {
+public class RunSimulationLoop extends PApplet {
     // override settings method in Processing to have the settings we want
     @Override
     public void settings() {
@@ -58,7 +58,7 @@ public class RunSimulation extends PApplet {
                 }
                 csvReader.close();
             } catch (IOException ex) {
-                Logger.getLogger(RunSimulation.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RunSimulationLoop.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -229,7 +229,7 @@ public class RunSimulation extends PApplet {
         storeFattyPos.writeToCSV("Fatty_data.csv");
         
         // show the applet where our methods are, to help it find the settings, setup and draw methods
-        PApplet.main(new String[]{runsimulation.RunSimulation.class.getName()});
+        PApplet.main(new String[]{runsimulation.RunSimulationLoop.class.getName()});
         
     }
     

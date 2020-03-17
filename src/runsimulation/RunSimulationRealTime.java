@@ -91,21 +91,22 @@ public class RunSimulationRealTime extends PApplet {
         double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
         double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
         
-        //double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
-        //double[] F_vel = {0., 20e3, 0.};        
+      //  double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
+       // double[] F_vel = {0., 20e3, 0.};        
              
         Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         sys.addObject(Earth); //adding eath to the solar sys. Creaes a sun in the middle too
         
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         sys.addObject(Jupiter); //adding Jupiter to the solar system       
-        int thickness = 10;
-        double rJ = Jupiter.getPosition()[0];
-        double[] astLine_pos = {1.5*rJ + thickness*100., rJ, 0.};
         
-        sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 500, false);
-        //Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
-        //sys.addObject(Fatty); //adding Fatty to the solar system
+        int thickness = 10;
+        double rJ =Jupiter.getPosition()[0];
+        double[] astLine_pos = {2*rJ + thickness*100., rJ, 0.};
+        
+        sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, false);
+      //  Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
+     //   sys.addObject(Fatty); //adding Fatty to the solar system
         /*
         for (int i = 0; i < n; i++){
             
@@ -208,19 +209,25 @@ public class RunSimulationRealTime extends PApplet {
                 // set stroke weight to be 0 again, to make it affect the current drawn object
                 strokeWeight(0);
                 if (name.equals("Sun")){
-                    fill(200, 154, 0);
+                    fill(250, 254, 76);
                     ellipse(xpos, -ypos, 20, 20);
                 } else if (name.contains("Asteroid")) {
                  // fill(red, green, blue, alpha)
                 // set the fill colour to be black
                     fill(165, 42, 42);
-                    ellipse(xpos, -ypos, 5, 5);
+                    ellipse(xpos, -ypos, 1, 1);
                     
                 }else if (name.equals("Earth")) {
                  // fill(red, green, blue, alpha)
                 // set the fill colour to be black
                     fill(101, 215, 255);
-                    ellipse(xpos, -ypos, 10, 10);
+                    ellipse(xpos, -ypos, 3, 3);
+                    
+                 }else if (name.equals("Jupiter")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(214, 101, 50);
+                    ellipse(xpos, -ypos, 5, 5);
                     
                 }else {
                  // fill(red, green, blue, alpha)
@@ -229,10 +236,11 @@ public class RunSimulationRealTime extends PApplet {
                     ellipse(xpos, -ypos, 10, 10);
                 }
                 // set the text size
+                fill(0,0,0);
                 textSize(14);
                 // add some text 10 pixels, and 30 degrees, away from the start of the ellipse
                 if (!name.contains("Asteroid")){
-                text(String.format("%s", name), (int)(xpos + 10*Math.cos((float)Math.PI/4.)), (int)(-ypos - 10*Math.sin((float)Math.PI/4.)));
+                text(String.format("%s", name), (int)(xpos + 12*Math.cos((float)Math.PI/4.)), (int)(-ypos - 12*Math.sin((float)Math.PI/4.)));
                 // create an ellipse at x=xpos and y=ypos with a radius of 10 pixels
                 }
                 

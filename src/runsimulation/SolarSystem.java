@@ -251,15 +251,16 @@ public class SolarSystem{
     
     private double[] fvector(double[][] fullstate){
         
-        double[][] accelerations = new double[objects.length][3]; //inituialising an array of accelerations for the bodies
+        double[][] accelerations = new double[objects.length][3]; //initialising an array of accelerations for the bodies
         
         double[] fvec = new double[objects.length*8];
         for (int i = 0; i < objects.length; i++){
             fvec[i*8 + 0] = fullstate[i][3];
             fvec[i*8 + 1] = fullstate[i][4];
             fvec[i*8 + 2] = fullstate[i][5];
+            
             for (int j = 0; j < objects.length; j++){
-                if ((i != j) && objects[i].name.contains("Asteroid") && !objects[j].name.contains("Asteroid")){
+                if ( (i != j)  && objects[i].name.contains("Asteroid") && !objects[j].name.contains("Asteroid")){
                     //double m1 = fullstate[i][6];
                     double m2 = fullstate[j][6];
                     
@@ -275,7 +276,8 @@ public class SolarSystem{
                     accelerations[i][2] += factor * r21[2];
                     
                     
-                } else if ((i != j) && !objects[i].name.contains("Asteroid") && !objects[j].name.contains("Asteroid")){
+                } else if ( (i != j)  && !objects[i].name.contains("Asteroid") && !objects[j].name.contains("Asteroid")){
+                    //double m1 = fullstate[i][6];
                     double m2 = fullstate[j][6];
                     
                     double[] r21 = {fullstate[i][0] - fullstate[j][0], fullstate[i][1] - fullstate[j][1], fullstate[i][2] - fullstate[j][2]};
@@ -288,7 +290,8 @@ public class SolarSystem{
                     accelerations[i][0] += factor * r21[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
                     accelerations[i][1] += factor * r21[1];
                     accelerations[i][2] += factor * r21[2];
-                
+                    
+                    
                 } else {
                     accelerations[i][0] += 0.; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
                     accelerations[i][1] += 0.;
@@ -466,7 +469,7 @@ public class SolarSystem{
         
         // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
         // Volume of a sphere = 4/3 * PI * r^3
-        double a_mass = 5000. * (4./3.) * Math.PI * a_radius * a_radius * a_radius;
+        double a_mass = 5000 * (4./3.) * Math.PI * a_radius * a_radius * a_radius;
         
         // create the asteroid with the above calculated values with the name AsteroidX, where X
         // is the current number of asteroids in the system
@@ -526,7 +529,7 @@ public class SolarSystem{
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
-            double a_mass = 9e8;//5e3 * (4./3.) * Math.PI * a_radius * a_radius * a_radius;
+            double a_mass =5e30 * (4./3.) * Math.PI * a_radius * a_radius * a_radius;
             Body ast = new Body(a_pos, a_vel, a_mass, a_radius, String.format("Asteroid%d", astNum));
             
             // add the asteroid to the system and increment the number of asteroids
