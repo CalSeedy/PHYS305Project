@@ -1,6 +1,8 @@
 
 package runsimulation;
-import java.util.ArrayList;
+
+import java.util.Random;
+
 // SolarSystem class manages all the objects that are inside the system,
 // handles the addition/removal of any objects and has the responsibility
 // of stepping all objects forward by 1 timestep with either Euler or RK4.
@@ -9,10 +11,11 @@ public class SolarSystem {
     final static double G = 6.67e-11; // Create a const. for G in SI [m]^3 [kg]^-1 [s]^-2 
     
     private Body[] objects;         // store a array of all bodies in the system
+    private int astNum = 0;         // store number of asteroids in the system
     
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
-    public SolarSystem(){
+    public SolarSystem() {
         // when creating a new solar system, create a "Sun" at the centre
         Body[] new_objects = new Body[1];   // initialise a new array of Bodies of length = 1
         double[] S_pos = {0., 0., 0.};      // define the position vector (origin for Sun)
@@ -247,11 +250,214 @@ public class SolarSystem {
         }
     }
     
+    private double[] fvector(double[][] fullstate){
+        
+        double[][] accelerations = new double[objects.length][3]; //inituialising an array of accelerations for the bodies
+        
+        double[] fvec = new double[objects.length*8];
+        for (int i = 0; i < objects.length; i++){
+            fvec[i*8 + 0] = fullstate[i][3];
+            fvec[i*8 + 1] = fullstate[i][4];
+            fvec[i*8 + 2] = fullstate[i][5];
+            for (int j = 0; j < objects.length; j++){
+                if (i != j){
+                    //double m1 = fullstate[i][6];
+                    double m2 = fullstate[j][6];
+                    
+                    double[] r21 = {fullstate[i][0] - fullstate[j][0], fullstate[i][1] - fullstate[j][1], fullstate[i][2] - fullstate[j][2]};
+                    double d = Math.sqrt(r21[0]*r21[0] + r21[1]*r21[1] + r21[2]*r21[2]);
+        
+                    double factor = -G*m2 / (d*d*d);
+                    
+                    // a12 = -G*m2 / (|r21|)^3 * r21
+                    
+                    accelerations[i][0] += factor * r21[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
+                    accelerations[i][1] += factor * r21[1];
+                    accelerations[i][2] += factor * r21[2];
+                    
+                    
+                }
+            }
+        }
+        
+        for (int i = 0; i < accelerations.length; i++){
+            fvec[i*8 + 3] = accelerations[i][0];
+            fvec[i*8 + 4] = accelerations[i][1];
+            fvec[i*8 + 5] = accelerations[i][2];
+        }
+        return fvec;
+    }
+    
+    private double[] calculateK(double[][] state, double dt){
+        double[] fvec = fvector(state);
+        double[] k = new double[fvec.length];
+        int count = 0;
+        for (double val : fvec){
+            k[count] = val*dt/2;
+            count++;
+        }
+        
+        return k;
+        
+    }
+    
+    private double[][] nextState(double[][] initial, double[][] other, double[] k, int step){
+        double multiple;
+        switch(step){
+            
+            case 0:
+                multiple = 0.0;
+            case 1:
+                multiple = 0.5;
+            case 2:
+                multiple = 0.5;
+            case 3:
+                multiple = 1.0;
+                
+            default:
+                multiple = 0.0;
+                
+        }
+        
+        int count = 0;
+        double[][] output = new double[initial.length][initial[0].length];
+        for (double[] state : other){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    output[count][i] = state[i] + multiple*k[count*8 + i]; 
+                } else {
+                    output[count][i] = initial[count][i];
+                }
+            }
+            count++;
+        }
+        
+        return output;
+    }
+    
+    
     // method for the implementation of the 4th Order Runge-Kutt integration 
     // method, taking in some timestep as dt
     public void stepRK4(double timestep){
-        // TODO: ADD 4th Order Runge-Kutta method for propogation 
+        // TODO: ADD 4th Order Runge-Kutta method for propogation
+        double[][] state_initial = new double[objects.length][8];
+        //double[][] state_second, state_third, state_fourth, state_final;
+        //state_second = state_third = state_fourth = state_final = state_initial;
+        int count = 0;
+        for (Body obj : objects){
+            double[] state = obj.getState();
+            state_initial[count] = state;
+            count++;
+        }
+        
+        
+        // calculating k1 and second state
+        double[] k1 = calculateK(state_initial, timestep);
+        double[][] state_second = nextState(state_initial, state_initial, k1, 1);
+
+        
+        // calculating k2 and the 3rd state
+        double[] k2 = calculateK(state_second, timestep);
+        double[][] state_third = nextState(state_initial, state_second, k2, 2);
+        
+        
+        // calculating k3 and 4th state
+        double[] k3 = calculateK(state_third, timestep);
+        double[][] state_fourth = nextState(state_initial, state_third, k2, 3);
+        
+        
+        // calculating k4 and final state
+        double[] k4 = calculateK(state_fourth, timestep);
+        
+        double[][] state_final = new double[state_initial.length][state_initial[0].length];
+        count = 0;
+        for (double[] state : state_initial){
+            for (int i = 0; i < state.length; i++){
+                if (i != 6 || i != 7){
+                    state_final[count][i] = state[i] + (1./6.)*k1[count * state.length + i] + (1./3.)*k2[count*state.length + i] + (1./3.)*k3[count*state.length + i] + (1./6.)*k4[count*state.length + i]; 
+                } else {
+                    state_final[count][i] = state_initial[count][i];
+                } 
+            }
+            count++;
+        }
+        
+        count = 0;
+        for (Body obj : objects){
+            double[] new_state = state_final[count];
+            obj.setState(new_state);
+            count++;
+        }
+        
+        
+        
     }
     
+    // method that creates a new instance of an asteroid (which is just a Body)
+    // the asteroid is generated with a random position on a unit sphere and always
+    // has a velocity towards the Earth
+    public void generateAsteroid(){
+        // Find the object that is the furthest away (that isnt an asteroid)
+        double furthest = 0.;
+        for (Body b : objects){
+            double[] pos = b.getPosition();
+            double distance = magnitude(pos);
+            if ((distance > furthest) && !(b.name.contains("Asteroid"))){
+                furthest = distance;
+            }
+        }
+        
+        Random rand = new Random();
+        
+        // Use Spherical Co-ordinates r, theta, phi
+        double phi = rand.nextDouble()*(2.*Math.PI);    // generate random angle
+        double theta = rand.nextDouble()*Math.PI;       // generate another random angle
+        double x, y, z;
+        // set the absolute distance from centre of a sphere to be twice the distance as the furthest object
+        double r = furthest*2.;                         // set abs. distance to be twice as far away as furthest object in SolarSystem
+        
+        // 3-D generation
+        /*
+        x = r*Math.sin(theta)*Math.cos(phi);
+        y = r*Math.sin(theta)*Math.sin(phi);
+        z = r*Math.cos(theta);
+        */
+        
+        // 2D - generation
+        x = r*Math.cos(phi);
+        y = r*Math.sin(phi);
+        z = 0.;
+        
+        // set the asteroid position
+        double[] a_pos = {x, y, z};
+
+        
+        // Find out where the Earth is
+        int ind = findObjectIndex("Earth");
+        Body E = getObject(ind);
+        double[] E_pos = E.getPosition();
+        
+        // create a velocity such that the asteroid heads towards Earth
+        double vx, vy, vz;
+        vx = ((x - E_pos[0])/1e7) * rand.nextGaussian() + ((x - E_pos[0])/1e6);
+        vy = ((y - E_pos[1])/1e7) * rand.nextGaussian() + ((x - E_pos[1])/1e6);
+        vz = ((z - E_pos[2])/1e7) * rand.nextGaussian() + ((x - E_pos[2])/1e6);
+        double[] a_vel = {vx , vy, vz};
+        
+        // set the asteroid's radius such that it is a Gaussian about (50 +/- 30)m
+        double a_radius = rand.nextGaussian()*33. + 50.;
+        
+        // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
+        // Volume of a sphere = 4/3 * PI * r^3
+        double a_mass = 5000. * (4./3.) * Math.PI * a_radius * a_radius * a_radius;
+        
+        // create the asteroid with the above calculated values with the name AsteroidX, where X
+        // is the current number of asteroids in the system
+        Body ast = new Body(a_pos, a_vel, a_mass, a_radius, String.format("Asteroid%d", astNum));
+        
+        // add the asteroid to the system and increment the number of asteroids
+        addObject(ast);
+        astNum++; 
+    }
     
 }
