@@ -1,4 +1,3 @@
-    
 package runsimulation;
 
 import processing.core.*;

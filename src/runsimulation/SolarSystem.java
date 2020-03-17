@@ -1,6 +1,5 @@
 package runsimulation;
 
-import java.util.Dictionary;
 import java.util.Random;
 
 // SolarSystem class manages all the objects that are inside the system,
