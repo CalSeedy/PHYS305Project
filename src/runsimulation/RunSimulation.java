@@ -17,7 +17,6 @@ public class RunSimulation extends PApplet {
         // sets the window size to 1920 x 1080 pixels (1080p)
         size(1280, 720);
     }
-    
     // create an array of file names that we want to open and display
     String[] files = {"Sun_data.csv","Earth_data.csv","Jupiter_data.csv","Fatty_data.csv"};
 
