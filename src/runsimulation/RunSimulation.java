@@ -1,3 +1,4 @@
+    
 package runsimulation;
 
 import java.io.BufferedReader;
@@ -138,7 +139,6 @@ public class RunSimulation extends PApplet {
         double timestep = (86400.)/2.; //1/2 a day is s
         
         SolarSystem system = new SolarSystem(); //initialising the solar system. Ceating a box
-        
         Data storeSunPos = new Data(n, timestep);
         Data storeEarthPos = new Data(n, timestep); // where the Earth data will go
         Data storeJupiterPos = new Data(n, timestep); 
@@ -167,7 +167,7 @@ public class RunSimulation extends PApplet {
         double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
         double[] F_vel = {0., 20e3, 0.};        
              
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //star position and velocity, mass and object radius, "name"
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
         
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
@@ -196,7 +196,7 @@ public class RunSimulation extends PApplet {
                 }
             }*/
             //system.stepEuler(timestep); //step using Euler
-            system.stepRK4(timestep); //step using Runge-Kutta            
+            system.stepRK4(timestep); //step using Euler
             //put NEW for loop here
             //for (int j = 0; j < system.getObjects().length-1; j++)){
             //double[] out = system.getObject(j).getPosition(); //for every j value, find the corresponding object
@@ -208,6 +208,7 @@ public class RunSimulation extends PApplet {
             int S_ind = system.findObjectIndex("Sun"); //find where the object is in the list
             double[] S_out = system.getObject(S_ind).getPosition(); //find where it is in the solar system 
             storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
+            
             
             int E_ind = system.findObjectIndex("Earth"); //find where the object is in the list
             double[] E_out = system.getObject(E_ind).getPosition(); //find where it is in the solar system 
@@ -229,6 +230,9 @@ public class RunSimulation extends PApplet {
         storeJupiterPos.writeToCSV("Jupiter_data.csv");
         storeFattyPos.writeToCSV("Fatty_data.csv");
         
+        // show the applet where our methods are, to help it find the settings, setup and draw methods
         PApplet.main(new String[]{runsimulation.RunSimulation.class.getName()});
+        
     }
+    
 }
