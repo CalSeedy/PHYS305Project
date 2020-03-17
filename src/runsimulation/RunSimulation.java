@@ -166,8 +166,10 @@ public class RunSimulation extends PApplet {
         
         double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
         double[] F_vel = {0., 20e3, 0.};        
-             
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //star position and velocity, mass and object radius, "name"
+        
+        String [] names = {"Sun", "Earth", "Jupiter", "Fatty"};
+        
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, names[1]); //start position and velocity, mass and object radius, "name"
         system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
         
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
