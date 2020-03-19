@@ -105,8 +105,8 @@ public class RunSimulationRealTime extends PApplet {
         double[] astLine_pos = {2*rJ + thickness*100., rJ, 0.};
         
         sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, false);
-      //  Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
-     //   sys.addObject(Fatty); //adding Fatty to the solar system
+        //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
+        //sys.addObject(Fatty); //adding Fatty to the solar system
         /*
         for (int i = 0; i < n; i++){
             
@@ -211,23 +211,23 @@ public class RunSimulationRealTime extends PApplet {
                 if (name.equals("Sun")){
                     fill(250, 254, 76);
                     ellipse(xpos, -ypos, 20, 20);
-                } else if (name.contains("Asteroid")) {
+                } else if (objs[i].isAsteroid) {
                  // fill(red, green, blue, alpha)
                 // set the fill colour to be black
                     fill(165, 42, 42);
-                    ellipse(xpos, -ypos, 1, 1);
+                    ellipse(xpos, -ypos, 3, 3);
                     
                 }else if (name.equals("Earth")) {
                  // fill(red, green, blue, alpha)
                 // set the fill colour to be black
                     fill(101, 215, 255);
-                    ellipse(xpos, -ypos, 3, 3);
+                    ellipse(xpos, -ypos, 5, 5);
                     
                  }else if (name.equals("Jupiter")) {
                  // fill(red, green, blue, alpha)
                 // set the fill colour to be black
                     fill(214, 101, 50);
-                    ellipse(xpos, -ypos, 5, 5);
+                    ellipse(xpos, -ypos, 10, 10);
                     
                 }else {
                  // fill(red, green, blue, alpha)
@@ -239,7 +239,7 @@ public class RunSimulationRealTime extends PApplet {
                 fill(0,0,0);
                 textSize(14);
                 // add some text 10 pixels, and 30 degrees, away from the start of the ellipse
-                if (!name.contains("Asteroid")){
+                if (!objs[i].isAsteroid){
                 text(String.format("%s", name), (int)(xpos + 12*Math.cos((float)Math.PI/4.)), (int)(-ypos - 12*Math.sin((float)Math.PI/4.)));
                 // create an ellipse at x=xpos and y=ypos with a radius of 10 pixels
                 }
