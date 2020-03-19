@@ -6,6 +6,7 @@ public class Body {
     private double mass;                    // object's masss [kg]
     private double radius;                  // object's radius [m]
     public String name;                     // name to refer to object
+    public boolean isAsteroid = false;
     
     // empty contructor
     public Body() {
@@ -38,6 +39,9 @@ public class Body {
         position = pos_in;
         velocity = vel_in;
         name = name_in;
+        if (name.contains("Asteroid")){
+            isAsteroid = true;
+        }
     }
     
     
