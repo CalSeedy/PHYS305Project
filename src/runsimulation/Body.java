@@ -6,6 +6,7 @@ public class Body {
     private double mass;                    // object's masss [kg]
     private double radius;                  // object's radius [m]
     public String name;                     // name to refer to object
+    public boolean isAsteroid = false;
     
     // empty contructor
     public Body() {
@@ -38,6 +39,9 @@ public class Body {
         position = pos_in;
         velocity = vel_in;
         name = name_in;
+        if (name.contains("Asteroid")){
+            isAsteroid = true;
+        }
     }
     
     
@@ -114,4 +118,29 @@ public class Body {
         return mass;
     }
     
+    public double getRadius(){ //getter for the Body's radius
+        return radius;
+    }
+    
+    public double [] getMomentum(){  //getter for the Body's momentum
+        double[] p = {0.,0.,0.,};
+        double [] velocity = getVelocity();
+        double mass = getMass(); //do I have to call the method to use 'mass'?
+        p[0] = mass * velocity[0];
+        p[1] = mass * velocity[1];
+        p[2] = mass * velocity[2];
+        return p;
+    }
+    
+    public void updateMass(double m){ //add a mass to th body's mass. this must be called before updateVelocity when two bodies collide
+        mass += m;
+    }
+    
+    //update the velocity after the momentum has been changed
+    public void updateVelocity(double [] momentum){ 
+        double vx = momentum[0] / getMass();
+        double vy = momentum[1] / getMass();
+        double vz = momentum[2] / getMass();
+        setVelocity(vx, vy, vz);
+    }
 }
