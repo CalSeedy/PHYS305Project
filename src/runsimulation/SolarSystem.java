@@ -31,8 +31,6 @@ public class SolarSystem {
         // overwrite the null array
         objects = new_objects;
         
-        Hit hit = new Hit(this);
-        Hits = hit;
     }
     
     
@@ -55,9 +53,6 @@ public class SolarSystem {
         
         // overwrite the stored array
         objects = new_objects;
-        
-        Hit hit = new Hit(this);
-        Hits = hit;
     }
     
     
@@ -87,7 +82,9 @@ public class SolarSystem {
         }
         // overwrite the stored array of Bodies
         objects = new_objects; 
-        
+    }
+    
+    public void genHitArray(){
         Hit hit = new Hit(this);
         Hits = hit;
     }

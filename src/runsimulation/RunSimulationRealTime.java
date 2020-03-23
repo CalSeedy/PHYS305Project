@@ -163,6 +163,8 @@ public class RunSimulationRealTime extends PApplet {
         
         */
         
+        sys.genHitArray();
+        
     }
     
     // create a counter to keep track of the set of data we want to plot
@@ -243,6 +245,7 @@ public class RunSimulationRealTime extends PApplet {
                 
             }
             sys.stepRK4(timestep);
+            
             sys.Hits.checkHit(sys);
             // after we display each object, increment the step we are on
             a++;

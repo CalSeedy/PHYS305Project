@@ -6,6 +6,7 @@ class Hit {
 
     int [] hits;   //will store the number of hits on each object
     String[] planetNames;
+    
     int[] planetIndexes;
     
     public Hit(SolarSystem sys){
@@ -21,6 +22,10 @@ class Hit {
         int[] idxs = new int[objs.length - c];
         //maybe create an aray of planet names
         hits = new int [names.length]; //objects.length
+        //for (int i : hits){
+        //    i = 0;
+        //}
+        
         planetNames = names;
         planetIndexes = idxs;
         
@@ -75,27 +80,36 @@ class Hit {
                     double d = b1.distanceToBody(b2);
                     double radii = b1.getRadius() + b2.getRadius();
 
-                    if (d <= 1.25*radii){
+                    if (d <= radii){
                         //System.out.println(String.format("%e: %s collided with %s", sys.time, b1.name, b2.name));
                         if (b1.isAsteroid && !b2.isAsteroid){
-                            System.out.println(String.format("\t %s was removed!", b1.name));
+                            //System.out.println(String.format("\t %s was removed!", b1.name));
                             sys.removeObject(sys.findObjectIndex(b1.name));
-                            
+                            int idx = sys.findObjectIndex(b2.name); 
+                            hits[idx] ++;
                         } else if (!b1.isAsteroid && b2.isAsteroid){
-                            System.out.println(String.format("\t %s was removed!", b2.name));
+                            //System.out.println(String.format("\t %s was removed!", b2.name));
                             sys.removeObject(sys.findObjectIndex(b2.name));
+                            int idx = sys.findObjectIndex(b1.name);
+                            hits[idx] ++;
+                            
                         } else {
                             // do stuff for planet-planet collisions
                         }
                     } else if (d <= 1.5*radii){
                         if (b1.isAsteroid){
-                            System.out.println(String.format("%e: %s barely passed by %s", sys.time, b1.name, b2.name));
+                            //System.out.println(String.format("%e: %s barely passed by %s", sys.time, b1.name, b2.name));
                         } else {
-                            System.out.println(String.format("%e: %s barely passed by %s", sys.time, b2.name, b1.name));
+                            //System.out.println(String.format("%e: %s barely passed by %s", sys.time, b2.name, b1.name));
                         }
                     }
                 }
             }       
+        }
+        System.out.println("\n\n");
+        for (int i = 0; i < hits.length; i++){
+            
+            System.out.println(String.format("%s :  %d", planetNames[i], hits[i]));
         }
     }
     
