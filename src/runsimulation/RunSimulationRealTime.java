@@ -1,6 +1,7 @@
 package runsimulation;
 
 import processing.core.*;
+import java.util.Random;
 
 // add "extends PApplet" to make our class an extension of PApplet, which lets us call their methods
 // and inherit all their properties
@@ -100,8 +101,31 @@ public class RunSimulationRealTime extends PApplet {
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         sys.addObject(Jupiter); //adding Jupiter to the solar system       
         
+        
+        Random rand = new Random();
+        for (Body obj : sys.getObjects()){
+            if (!obj.name.equals("Sun")){
+                double randTheta = rand.nextDouble()*2*Math.PI;
+                //double randPhi = rand.nextDouble()*Math.PI;
+
+                double[] pos = obj.getPosition();
+                double r = Math.sqrt(pos[0]*pos[0] + pos[1]*pos[1] + pos[2]*pos[2]);
+
+                double[] vel = obj.getVelocity();
+                double v = Math.sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]); 
+
+                double[] newPos = {r*Math.cos(randTheta), r*Math.sin(randTheta), 0.}; // {r*Math.cos(randTheta)*Math.sin(randPhi), r*Math.sin(randTheta)*Math.sin(randPhi), r*Math.cos(randPhi)};
+                double[] newVel = {v*Math.sin(randTheta), v*Math.cos(randTheta), 0.}; // {v*Math.sin(randTheta)*Math.sin(randPhi), v*Math.cos(randTheta)*Math.sin(randPhi), v*Math.cos(randPhi)};
+
+                obj.setPosition(newPos[0], newPos[1], newPos[2]);
+                obj.setVelocity(newVel[0], newVel[1], newVel[2]);
+            }
+        }
+        
+        
         int thickness = 10;
-        double rJ =Jupiter.getPosition()[0];
+        double[] pJ = Jupiter.getPosition();
+        double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
         double[] astLine_pos = {2*rJ + thickness*100., rJ, 0.};
         
         sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, false);
