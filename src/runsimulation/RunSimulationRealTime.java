@@ -17,13 +17,13 @@ public class RunSimulationRealTime extends PApplet {
     
     // create an array of file names that we want to open and display
     String[] files = {"Sun_data.csv","Earth_data.csv","Jupiter_data.csv","Fatty_data.csv"};
-
+    int n = 2000; // number of steps
     // create a 3D array of positions for the 10000 steps, for each file
-    float[][][] pos = new float[10000][files.length][3];
+    float[][][] pos = new float[n][files.length][3];
     // create a 1D array of times
-    float[] times = new float[10000];
+    float[] times = new float[n];
     
-    double timestep = (86400.)*2.; //1/2 a day is s
+    double timestep = (24*60*60); //
     // override the setup method in Processing to provide inital values at the start of the program
     // this method is called only once, at the start of the program
     @Override
@@ -61,7 +61,7 @@ public class RunSimulationRealTime extends PApplet {
         }
         */
         
-        int n = 10000; // number of steps
+        
         
         
         sys = new SolarSystem(); //initialising the solar sys. Ceating a box
@@ -84,20 +84,95 @@ public class RunSimulationRealTime extends PApplet {
             sys.addObject(bod);
         }*/
         
+        
+        /*
         double[] E_pos = {1.495978707e11, 0., 0.}; //position of Earth m = radius or orbit
         double[] E_vel = {0., 29.78e3, 0.}; 
         
         double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
         double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
-        
-      //  double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
-       // double[] F_vel = {0., 20e3, 0.};        
+              
              
         Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         sys.addObject(Earth); //adding eath to the solar sys. Creaes a sun in the middle too
         
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
+        sys.addObject(Jupiter); //adding Jupiter to the solar system
+        */
+        
+        
+        double[] E_pos = {1.495978707e11, 0., 0.}; //Average radius of orbit
+        //double[] E_pos = {1.52E11, 0., 0.}; //Perihelion
+        double[] E_vel = {0., 29780., 0.}; //Mean. Orininally set as 29.78e3 m/s
+        //double[] E_vel = {0., 30290., 0.}; //Max
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
+        sys.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
+        
+        double[] J_pos = {7.78574E11, 0., 0.}; //Average
+        //double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
+        double[] J_vel = {0., 13.07e3, 0.}; //Average velocity
+        //double[] J_vel = {0., 13.07e3, 0.}; //Max
+        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         sys.addObject(Jupiter); //adding Jupiter to the solar system       
+        
+        
+        //double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
+        //double[] F_vel = {0., 20e3, 0.};
+        //Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
+        //system.addObject(Fatty); //adding Fatty to the solar system
+        
+        double[] Mars_pos = {2.28E11, 0., 0.}; //Mars semi major axis
+        //double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
+        double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
+        //double[] Mars_vel = {0., 2.65E04, 0.}; //Max
+        Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, 3389.5e+3, "Mars"); //mass, mean radius
+        sys.addObject(Mars);
+        
+        double[] V_pos = {1.08E11, 0., 0.}; //Venus semi major axis. Not updated values yet!
+        //double[] V_pos = {1.07E11, 0., 0.}; //Perihelion
+        double[] V_vel = {0., 35.02e3, 0.};
+        //double[] V_vel = {0., 3.53E+04, 0.}; //Max
+        Body Venus = new Body(V_pos, V_vel, 4.8675E24, 6051.8e3, "Venus"); //mass, mean radius
+        sys.addObject(Venus);
+        
+        /*
+         double[] Mercury_pos = {2.28E11, 0., 0.}; //Mercury semi major axis. Not updated values yet!
+        //double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
+        double[] Mercury_vel = {0., 24070., 0.};
+        //double[] Mercury_vel = {0., 26500., 0.}; //Max
+        Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, 2439.7e+3, "Mercury"); //mass, mean radius
+        sys.addObject(Mercury);
+        */
+        
+        double[] S_pos = {14.3353E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
+        //double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
+        double[] S_vel = {0., 9680., 0.}; //Mean
+        // double[] S_vel = {0., 10180., 0.}; //Max
+        Body Saturn = new Body(S_pos, S_vel, 5.6834E26, 58232E3, "Saturn"); //mass, mean radius
+        sys.addObject(Saturn);
+            
+        
+        double[] U_pos = {28.7246E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
+        //double[] U_pos = {2.74E+12, 0., 0.}; //Perihelion
+        double[] U_vel = {0., 6.80E3, 0.};
+        //double[] U_vel = {0., 7110.0, 0.}; //Max
+        Body Uranus = new Body(U_pos, U_vel, 8.6813E25, 25362E3, "Uranus"); //mass, mean radius
+        sys.addObject(Uranus);
+        
+        
+        double[] N_pos = {44.9506E11, 0., 0.}; //Semi major axis
+        //double[] N_pos = {444445E+7, 0., 0.}; //Perihelion
+        double[] N_vel = {0., 5430., 0.}; //Mean
+        //double[] N_vel = {0., 5500., 0.0}; //Max
+        Body Neptune = new Body(N_pos, N_vel, 1.02413E+26, 24622000, "Neptune"); //mass, mean radius
+        sys.addObject(Neptune);
+        
+        double[] P_pos = {59.0638E+11, 0., 0.}; //Semi major axis
+        //double[] P_pos = {443682E+7, 0., 0.}; //Perihelion
+        double[] P_vel = {0., 4670, 0.}; //Mean
+        //double[] P_vel = {0., 6100, 0.}; //Max
+        Body Pluto = new Body(P_pos, P_vel, 1.303E+22, 1187000, "Pluto"); //mass, mean radius
+        sys.addObject(Pluto);
         
         int thickness = 10;
         double rJ = Jupiter.getPosition()[0];

@@ -160,23 +160,42 @@ public class RunSimulation extends PApplet {
         
         double[] E_pos = {1.495978707e11, 0., 0.}; //position of Earth m = radius or orbit
         double[] E_vel = {0., 29.78e3, 0.}; 
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
+        system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
         
         double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
         double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
-        
-        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
-        double[] F_vel = {0., 20e3, 0.};        
-        
-        String [] names = {"Sun", "Earth", "Jupiter", "Fatty"};
-        
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, names[1]); //start position and velocity, mass and object radius, "name"
-        system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
-        
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         system.addObject(Jupiter); //adding Jupiter to the solar system       
         
+        /*
+        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
+        double[] F_vel = {0., 20e3, 0.};
         Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         system.addObject(Fatty); //adding Fatty to the solar system
+        */
+        
+        double[] Mars_pos = {227939200.0E3, 0., 0.}; //Mars semi major axis
+        double[] Mars_vel = {0., 24.007e3, 0.};
+        Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E23, 3389.5e3, "Mars"); //mass, mean radius
+        system.addObject(Mars);
+        
+        double[] V_pos = {108208000E3, 0., 0.}; //Venus semi major axis. Not updated values yet!
+        double[] V_vel = {0., 35.02e3, 0.};
+        Body Venus = new Body(V_pos, V_vel, 4.8675E24, 6051.8e3, "Venus"); //mass, mean radius
+        system.addObject(Venus);
+        
+        double[] Mercury_pos = {57909050E3, 0., 0.}; //Mercury semi major axis. Not updated values yet!
+        double[] Mercury_vel = {0., 47.362e3, 0.};
+        Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E23, 2439.7e3, "Mercury"); //mass, mean radius
+        system.addObject(Mercury);
+        
+        double[] S_pos = {1433.53E9, 0., 0.}; //Saturn semi major axis. Not updated values yet!
+        double[] S_vel = {0., 9.68e3, 0.};
+        Body Saturn = new Body(S_pos, S_vel, 5.6834E26, 58232e3, "Saturn"); //mass, mean radius
+        system.addObject(Saturn);
+        
+        String [] names = {"Sun", "Earth", "Jupiter", "Mars", "Venus"}; //, "Fatty"
         
         for (int i = 0; i < n; i++){
             /*
