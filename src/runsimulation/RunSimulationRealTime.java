@@ -1,6 +1,6 @@
-package runsimulation;
 
 import processing.core.*;
+import java.util.Random;
 
 // add "extends PApplet" to make our class an extension of PApplet, which lets us call their methods
 // and inherit all their properties
@@ -47,6 +47,7 @@ public class RunSimulationRealTime extends PApplet {
                         float x = new Float(input[1]);
                         float y = new Float(input[2]);
                         float z = new Float(input[3]);
+
                         times[c-1] = t;
                         float[] position = {x, y, z};
                         //System.out.println(String.format("%d Pos: (%f, %f, %f)", c-1, x, y, z));
@@ -115,12 +116,11 @@ public class RunSimulationRealTime extends PApplet {
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         sys.addObject(Jupiter); //adding Jupiter to the solar system       
         
-        
         //double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
         //double[] F_vel = {0., 20e3, 0.};
         //Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         //system.addObject(Fatty); //adding Fatty to the solar system
-        
+                
         double[] Mars_pos = {2.28E11, 0., 0.}; //Mars semi major axis
         //double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
         double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
@@ -173,12 +173,33 @@ public class RunSimulationRealTime extends PApplet {
         //double[] P_vel = {0., 6100, 0.}; //Max
         Body Pluto = new Body(P_pos, P_vel, 1.303E+22, 1187000, "Pluto"); //mass, mean radius
         sys.addObject(Pluto);
-        
+
+        Random rand = new Random();
+        for (Body obj : sys.getObjects()){
+            if (!obj.name.equals("Sun")){
+                double randTheta = rand.nextDouble()*2*Math.PI;
+                //double randPhi = rand.nextDouble()*Math.PI;
+
+                double[] pos = obj.getPosition();
+                double r = Math.sqrt(pos[0]*pos[0] + pos[1]*pos[1] + pos[2]*pos[2]);
+
+                double[] vel = obj.getVelocity();
+                double v = Math.sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]); 
+
+                double[] newPos = {r*Math.cos(randTheta), r*Math.sin(randTheta), 0.}; // {r*Math.cos(randTheta)*Math.sin(randPhi), r*Math.sin(randTheta)*Math.sin(randPhi), r*Math.cos(randPhi)};
+                double[] newVel = {v*Math.sin(randTheta), v*Math.cos(randTheta), 0.}; // {v*Math.sin(randTheta)*Math.sin(randPhi), v*Math.cos(randTheta)*Math.sin(randPhi), v*Math.cos(randPhi)};
+
+                obj.setPosition(newPos[0], newPos[1], newPos[2]);
+                obj.setVelocity(newVel[0], newVel[1], newVel[2]);
+            }
+        }
+
         int thickness = 10;
-        double rJ = Jupiter.getPosition()[0];
-        double[] astLine_pos = {0.25*rJ + thickness*100., rJ, 0.};
+        double[] pJ = Jupiter.getPosition();
+        double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
+        double[] astLine_pos = {2*rJ + thickness*100., rJ, 0.};
         
-        sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 500, true);
+        sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, false);
         //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
         //sys.addObject(Fatty); //adding Fatty to the solar system
         /*
@@ -223,6 +244,7 @@ public class RunSimulationRealTime extends PApplet {
             int J_ind = sys.findObjectIndex("Jupiter");
             double[] J_out = sys.getObject(J_ind).getPosition();
             storeJupiterPos.addData(J_out[0], J_out[1], J_out[2], i);
+
             int F_ind = sys.findObjectIndex("Fatty");
             double[] F_out = sys.getObject(F_ind).getPosition();
             storeFattyPos.addData(F_out[0], F_out[1], F_out[2], i);            
@@ -244,7 +266,6 @@ public class RunSimulationRealTime extends PApplet {
     
     // create a counter to keep track of the set of data we want to plot
     int a = 0;
-    
     // override the draw method to display the objects we want on the screen
     // this method is called once every 1/30th(?) of a second, this rate can be changed with the 
     // "frameRate(X)" method, X is the numebr of frames per second

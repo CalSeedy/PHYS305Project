@@ -1,3 +1,4 @@
+
 package runsimulation;
 
 import java.util.Random;
@@ -198,17 +199,62 @@ public class SolarSystem {
             }                
         }
            
-        for (int i = 0; i < accelerations.length; i++){
-            v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
-            v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
-            v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+    for (int i = 0; i < accelerations.length; i++){
+        v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+        v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+        v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+        
+        positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+        positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+        positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+        
+        objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+        objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
+        }
+    }    
+      
+    
+    public void Hit(){
+        int [] hits = new int[objects.length]; //will store the number of hits on each object
+        
+        for (int j = 0; j < objects.length; j++){
+            for (int i = 0; i < objects.length; i++){
+                double d = objects[i].distanceToBody(objects[j]);
+                double radii = objects[i].getRadius() + objects[j].getRadius();
+                if ( d <= radii){
+                    
+                    double m1 = objects[i].getMass();
+                    double m2 = objects[j].getMass();
+                    
+                    if (m1 / m2 > Math.pow(10,6)) { //if m2 is much smaller than m1
+                        //m2 will merge with m1 and transfer its momentum to m1
 
-            positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
-            positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
-            positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+                        double[] momentum1 = objects[i].getMomentum();
+                        double[] momentum2 = objects[j].getMomentum();
+                        double[] new_momentum =  {0.,0.,0.};
+                        new_momentum[0] = momentum1[0]+momentum2[0];
+                        new_momentum[1] = momentum1[1]+momentum2[1];
+                        new_momentum[2] = momentum1[2]+momentum2[2];
+                    
+                        double new_mass = objects[i].getMass()+objects[j].getMass();
+                    
+                        String name1 = objects[j].getName(); //the names of the objects which have collided
+                        String name2 = objects[i].getName();
+                        objects[j].updateMass(objects[i].getMass());
+                        objects[j].updateVelocity(new_momentum);
+                        removeObject(i);
 
-            objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
-            objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
+                        hits[j] ++;
+                        hits[i] ++;
+                    
+                    //update the mass and momentum x of the first body to include the mass of the second
+                    //update the speed of the first body
+                    //delete the seocnd body
+                    //record what body hit what
+                    //or should I just delete the body with 'asteroid' in its name??
+                    }
+                }
+            }
         }
     
         time += timestep;
@@ -470,7 +516,7 @@ public class SolarSystem {
                 a_vel[1] = vy;
                 a_vel[2] = vz;
             } else {
-                vx = -2.7e4;
+                vx = -1.7e4;
                 a_vel[0] = vx;
             }
             
