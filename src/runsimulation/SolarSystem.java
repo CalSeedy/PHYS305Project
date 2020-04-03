@@ -494,7 +494,7 @@ public class SolarSystem {
         Random rand = new Random();
         for (int i = 0; i < N; i++){
             double x, y, z;
-            x = x_in - rand.nextDouble()*(thickness*148.28e7);
+            x = x_in - rand.nextDouble()*(thickness*148.28e7)*0.99;
             y = y_in - rand.nextDouble()*(2.*7.78574E11);
             z = z_in; // can do same as above but with some "width/height"
             

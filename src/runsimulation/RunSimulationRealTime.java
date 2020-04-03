@@ -8,6 +8,7 @@ import java.util.Random;
 public class RunSimulationRealTime extends PApplet {
     
     SolarSystem sys;
+    Hit hits;
     
     // override settings method in Processing to have the settings we want
     @Override
@@ -188,19 +189,19 @@ public class RunSimulationRealTime extends PApplet {
                 double v = Math.sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]); 
 
                 double[] newPos = {r*Math.cos(randTheta), r*Math.sin(randTheta), 0.}; // {r*Math.cos(randTheta)*Math.sin(randPhi), r*Math.sin(randTheta)*Math.sin(randPhi), r*Math.cos(randPhi)};
-                double[] newVel = {v*Math.sin(randTheta), v*Math.cos(randTheta), 0.}; // {v*Math.sin(randTheta)*Math.sin(randPhi), v*Math.cos(randTheta)*Math.sin(randPhi), v*Math.cos(randPhi)};
+                double[] newVel = {v*Math.sin(randTheta), -v*Math.cos(randTheta), 0.}; // {v*Math.sin(randTheta)*Math.sin(randPhi), v*Math.cos(randTheta)*Math.sin(randPhi), v*Math.cos(randPhi)};
 
                 obj.setPosition(newPos[0], newPos[1], newPos[2]);
                 obj.setVelocity(newVel[0], newVel[1], newVel[2]);
             }
         }
         
-        int thickness = 10;
+        int thickness = 1000;
         double[] pJ = Jupiter.getPosition();
         double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
-        double[] astLine_pos = {2*rJ + thickness*100., rJ, 0.};
+        double[] astLine_pos = {2.*rJ + thickness, rJ, 0.};
         
-        sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, false);
+        sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 1000, false);
         //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
         //sys.addObject(Fatty); //adding Fatty to the solar system
         /*
