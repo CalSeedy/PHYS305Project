@@ -1,3 +1,4 @@
+package runsimulation;
 
 import processing.core.*;
 import java.util.Random;

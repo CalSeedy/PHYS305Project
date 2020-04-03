@@ -199,18 +199,20 @@ public class SolarSystem {
             }                
         }
            
-    for (int i = 0; i < accelerations.length; i++){
-        v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
-        v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
-        v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
-        
-        positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
-        positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
-        positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
-        
-        objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
-        objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
+        for (int i = 0; i < accelerations.length; i++){
+            v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+            v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+            v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+
+            positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+            positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+            positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+
+            objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+            objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
         }
+        
+        time += timestep;
     }    
       
     
@@ -256,8 +258,6 @@ public class SolarSystem {
                 }
             }
         }
-    
-        time += timestep;
     }
     
     private double[] fvector(double[][] fullstate){

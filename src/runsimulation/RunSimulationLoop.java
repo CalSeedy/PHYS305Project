@@ -10,7 +10,7 @@ import java.util.Random;
 
 // add "extends PApplet" to make our class an extension of PApplet, which lets us call their methods
 // and inherit all their properties
-public class RunSimulation extends PApplet {
+public class RunSimulationLoop extends PApplet {
     // override settings method in Processing to have the settings we want
     @Override
     public void settings() {
@@ -59,7 +59,7 @@ public class RunSimulation extends PApplet {
                 }
                 csvReader.close();
             } catch (IOException ex) {
-                Logger.getLogger(RunSimulation.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RunSimulationLoop.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -164,15 +164,17 @@ public class RunSimulation extends PApplet {
         double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
         double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
         
-        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
-        double[] F_vel = {0., 20e3, 0.};        
+               
              
         Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
         
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
-        system.addObject(Jupiter); //adding Jupiter to the solar system       
+        system.addObject(Jupiter); //adding Jupiter to the solar system     
         
+        /*
+        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
+        double[] F_vel = {0., 20e3, 0.}; 
         Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         system.addObject(Fatty); //adding Fatty to the solar system
         */
@@ -252,6 +254,6 @@ public class RunSimulation extends PApplet {
         storeJupiterPos.writeToCSV("Jupiter_data.csv");
         storeFattyPos.writeToCSV("Fatty_data.csv");
         
-        PApplet.main(new String[]{runsimulation.RunSimulation.class.getName()});
+        PApplet.main(new String[]{runsimulation.RunSimulationLoop.class.getName()});
     }
 }
