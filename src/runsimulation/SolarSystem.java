@@ -1,3 +1,4 @@
+
 package runsimulation;
 
 import java.util.Random;
@@ -5,12 +6,14 @@ import java.util.Random;
 // SolarSystem class manages all the objects that are inside the system,
 // handles the addition/removal of any objects and has the responsibility
 // of stepping all objects forward by 1 timestep with either Euler or RK4.
-public class SolarSystem{
+public class SolarSystem {
     
     final static double G = 6.67e-11; // Create a const. for G in SI [m]^3 [kg]^-1 [s]^-2 
     
     private Body[] objects;         // store a array of all bodies in the system
     private int astNum = 0;         // store number of asteroids in the system
+    public double time = 0.; 
+    public Hit Hits;
     
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
@@ -28,6 +31,7 @@ public class SolarSystem{
         
         // overwrite the null array
         objects = new_objects;
+        
     }
     
     
@@ -78,7 +82,12 @@ public class SolarSystem{
             }
         }
         // overwrite the stored array of Bodies
-        objects = new_objects;      
+        objects = new_objects; 
+    }
+    
+    public void genHitArray(){
+        Hit hit = new Hit(this);
+        Hits = hit;
     }
     
     // getter for the array of objects
@@ -190,18 +199,20 @@ public class SolarSystem{
                 }                
             }
            
-    for (int i = 0; i < accelerations.length; i++){
-        v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
-        v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
-        v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
-        
-        positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
-        positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
-        positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
-        
-        objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
-        objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
+        for (int i = 0; i < accelerations.length; i++){
+            v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+            v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+            v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+
+            positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+            positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+            positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+
+            objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+            objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
         }
+        
+        time += timestep;
     }    
       
     
@@ -395,7 +406,7 @@ public class SolarSystem{
         }
         
         
-        
+        time += timestep;
     }
     
     // method that creates a new instance of an asteroid (which is just a Body)
@@ -498,9 +509,9 @@ public class SolarSystem{
                 double[] E_pos = E.getPosition();
 
                 // create a velocity such that the asteroid heads towards Earth
-                vx = (((x - E_pos[0])) * rand.nextGaussian() + ((x - E_pos[0]))/100) / 1e3;
-                vy = (((y - E_pos[1])) * rand.nextGaussian() + ((x - E_pos[1]))/100) / 1e3;
-                vz = (((z - E_pos[2])) * rand.nextGaussian() + ((x - E_pos[2]))/100) / 1e3;
+                vx = -(((x - E_pos[0]))/7.78574E8); //+ (0.5*(x - E_pos[0]))/7.78574E11)*1e3 *(rand.nextDouble());
+                vy = -(((y - E_pos[1]))/7.78574E8); //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
+                vz = 0.;//(((z - E_pos[2])) * rand.nextGaussian() + ((x - E_pos[2])));
                 a_vel[0] = vx;
                 a_vel[1] = vy;
                 a_vel[2] = vz;

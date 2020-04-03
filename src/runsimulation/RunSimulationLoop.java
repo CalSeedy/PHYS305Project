@@ -1,4 +1,4 @@
-  package runsimulation;
+package runsimulation;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,6 +17,7 @@ public class RunSimulationLoop extends PApplet {
         // sets the window size to 1920 x 1080 pixels (1080p)
         size(1280, 720);
     }
+    
     // create an array of file names that we want to open and display
     String[] files = {"Sun_data.csv","Earth_data.csv","Jupiter_data.csv","Fatty_data.csv"};
 
@@ -137,6 +138,7 @@ public class RunSimulationLoop extends PApplet {
         double timestep = (86400.)/2.; //1/2 a day is s
         
         SolarSystem system = new SolarSystem(); //initialising the solar system. Ceating a box
+        
         Data storeSunPos = new Data(n, timestep);
         Data storeEarthPos = new Data(n, timestep); // where the Earth data will go
         Data storeJupiterPos = new Data(n, timestep); 
@@ -162,17 +164,42 @@ public class RunSimulationLoop extends PApplet {
         double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
         double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
         
-        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
-        double[] F_vel = {0., 20e3, 0.};        
+               
              
         Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         system.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
         
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
-        system.addObject(Jupiter); //adding Jupiter to the solar system       
+        system.addObject(Jupiter); //adding Jupiter to the solar system     
         
+        /*
+        double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
+        double[] F_vel = {0., 20e3, 0.}; 
         Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         system.addObject(Fatty); //adding Fatty to the solar system
+        */
+        
+        double[] Mars_pos = {227939200.0E3, 0., 0.}; //Mars semi major axis
+        double[] Mars_vel = {0., 24.007e3, 0.};
+        Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E23, 3389.5e3, "Mars"); //mass, mean radius
+        system.addObject(Mars);
+        
+        double[] V_pos = {108208000E3, 0., 0.}; //Venus semi major axis. Not updated values yet!
+        double[] V_vel = {0., 35.02e3, 0.};
+        Body Venus = new Body(V_pos, V_vel, 4.8675E24, 6051.8e3, "Venus"); //mass, mean radius
+        system.addObject(Venus);
+        
+        double[] Mercury_pos = {57909050E3, 0., 0.}; //Mercury semi major axis. Not updated values yet!
+        double[] Mercury_vel = {0., 47.362e3, 0.};
+        Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E23, 2439.7e3, "Mercury"); //mass, mean radius
+        system.addObject(Mercury);
+        
+        double[] S_pos = {1433.53E9, 0., 0.}; //Saturn semi major axis. Not updated values yet!
+        double[] S_vel = {0., 9.68e3, 0.};
+        Body Saturn = new Body(S_pos, S_vel, 5.6834E26, 58232e3, "Saturn"); //mass, mean radius
+        system.addObject(Saturn);
+        
+        String [] names = {"Sun", "Earth", "Jupiter", "Mars", "Venus"}; //, "Fatty"
         
         for (int i = 0; i < n; i++){
             /*
@@ -194,7 +221,7 @@ public class RunSimulationLoop extends PApplet {
                 }
             }*/
             //system.stepEuler(timestep); //step using Euler
-            system.stepRK4(timestep); //step using Euler
+            system.stepRK4(timestep); //step using Runge-Kutta            
             //put NEW for loop here
             //for (int j = 0; j < system.getObjects().length-1; j++)){
             //double[] out = system.getObject(j).getPosition(); //for every j value, find the corresponding object
@@ -206,7 +233,6 @@ public class RunSimulationLoop extends PApplet {
             int S_ind = system.findObjectIndex("Sun"); //find where the object is in the list
             double[] S_out = system.getObject(S_ind).getPosition(); //find where it is in the solar system 
             storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
-            
             
             int E_ind = system.findObjectIndex("Earth"); //find where the object is in the list
             double[] E_out = system.getObject(E_ind).getPosition(); //find where it is in the solar system 
@@ -232,5 +258,4 @@ public class RunSimulationLoop extends PApplet {
         PApplet.main(new String[]{runsimulation.RunSimulationLoop.class.getName()});
         
     }
-    
 }
