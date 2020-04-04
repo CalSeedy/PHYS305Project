@@ -101,16 +101,27 @@ public class SolarSystem {
     }
     
     // private method to return the magnitude of a 3D vector
-    private double magnitude(double[] vector){
+    public double magnitude(double[] vector){
         // R = {x, y, z}, |R| = sqrt(x^2 + y^2 + z^2), |R|^2 = R.R
         // --> |R| = sqrt(R.R)
         return Math.sqrt(dot(vector, vector));
     }
     
     // private method to return the dot product of two 3D vectors
-    private double dot(double[] vector1, double[] vector2){
+    public double dot(double[] vector1, double[] vector2){
         // A.B = (A_x * B_x) + (A_y * B_y) + (A_z * B_z)
         return (vector1[0]*vector2[0] + vector1[1]*vector2[1] + vector1[2]*vector2[2]);
+    }
+    
+    public double[] cross(double[] vec1, double[] vec2){
+        double[] out = new double[3];
+        if (vec1.length == vec2.length && vec1.length == 3){
+            out[0] = (vec1[1]*vec2[2])-(vec1[2]*vec2[1]);
+            out[1] = -(vec1[0]*vec2[2])-(vec1[2]*vec2[0]);
+            out[2] = (vec1[0]*vec2[1])-(vec1[1]*vec2[0]);
+            
+        }
+        return out;
     }
     
     

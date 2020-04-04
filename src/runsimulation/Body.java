@@ -5,6 +5,7 @@ public class Body {
     private double[] velocity;              // velocity in x, y, z [m][s]^-1
     private double mass;                    // object's masss [kg]
     private double radius;                  // object's radius [m]
+    private double eccentricity;
     public String name;                     // name to refer to object
     public boolean isAsteroid = false;
     
@@ -130,6 +131,14 @@ public class Body {
         p[1] = mass * velocity[1];
         p[2] = mass * velocity[2];
         return p;
+    }
+    
+    public double getEccentricity(){
+        return eccentricity;
+    }
+    
+    public void setEccentricity(double e){
+        eccentricity = e;
     }
     
     public void updateMass(double m){ //add a mass to th body's mass. this must be called before updateVelocity when two bodies collide
