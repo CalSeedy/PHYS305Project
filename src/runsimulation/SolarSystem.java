@@ -472,7 +472,7 @@ public class SolarSystem {
         double[] a_vel = {vx , vy, vz};
         
         // set the asteroid's radius such that it is a Gaussian about (50 +/- 30)m
-        double a_radius = rand.nextGaussian()*33. + 50.;
+        double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
         
         // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
         // Volume of a sphere = 4/3 * PI * r^3
@@ -518,11 +518,10 @@ public class SolarSystem {
                 int ind = findObjectIndex("Earth");
                 Body E = getObject(ind);
                 double[] E_pos = E.getPosition();
-
                 // create a velocity such that the asteroid heads towards Earth
-                vx = -(((x - E_pos[0]))/7.78574E8); //+ (0.5*(x - E_pos[0]))/7.78574E11)*1e3 *(rand.nextDouble());
-                vy = -(((y - E_pos[1]))/7.78574E8); //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
-                vz = 0.;//(((z - E_pos[2])) * rand.nextGaussian() + ((x - E_pos[2])));
+                vx = (a_pos[0] - E_pos[0])/ 1e8;
+                vy = -(a_pos[1] - E_pos[1])/ 1e8; //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
+                vz = 0.;//(a_pos[2] - E_pos[2])/ 1e7;
                 a_vel[0] = vx;
                 a_vel[1] = vy;
                 a_vel[2] = vz;
@@ -532,7 +531,7 @@ public class SolarSystem {
             }
             
             // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
-            double a_radius = rand.nextGaussian()*33. + 50.;
+            double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
@@ -546,5 +545,20 @@ public class SolarSystem {
         }
     }
     
+    public void cleanAsteroids(){
+        for(Body b : objects){
+            if (b.isAsteroid){
+                double[] pos = b.getPosition();
+                double d = magnitude(pos);
+                if (d >= 1e13){
+                    removeObject(findObjectIndex(b.name));
+                }
+            }
+        }
+    }
     
+    
+    public Hit getHits(){
+        return Hits;
+    }
 }

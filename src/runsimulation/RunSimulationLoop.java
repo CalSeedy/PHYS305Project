@@ -139,10 +139,10 @@ public class RunSimulationLoop extends PApplet {
         
         SolarSystem system = new SolarSystem(); //initialising the solar system. Ceating a box
         
-        Data storeSunPos = new Data(n, timestep);
-        Data storeEarthPos = new Data(n, timestep); // where the Earth data will go
-        Data storeJupiterPos = new Data(n, timestep); 
-        Data storeFattyPos = new Data(n, timestep); //fat planet
+        //Data storeSunPos = new Data(n, timestep);
+        //Data storeEarthPos = new Data(n, timestep); // where the Earth data will go
+        //Data storeJupiterPos = new Data(n, timestep); 
+        //Data storeFattyPos = new Data(n, timestep); //fat planet
         
         /*
         Random r = new Random();
@@ -232,27 +232,27 @@ public class RunSimulationLoop extends PApplet {
             
             int S_ind = system.findObjectIndex("Sun"); //find where the object is in the list
             double[] S_out = system.getObject(S_ind).getPosition(); //find where it is in the solar system 
-            storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
+            //storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
             
             int E_ind = system.findObjectIndex("Earth"); //find where the object is in the list
             double[] E_out = system.getObject(E_ind).getPosition(); //find where it is in the solar system 
-            storeEarthPos.addData(E_out[0], E_out[1], E_out[2], i); //store the (x,y,z) coordinates
+            //storeEarthPos.addData(E_out[0], E_out[1], E_out[2], i); //store the (x,y,z) coordinates
             
             int J_ind = system.findObjectIndex("Jupiter");
             double[] J_out = system.getObject(J_ind).getPosition();
-            storeJupiterPos.addData(J_out[0], J_out[1], J_out[2], i);
+            //storeJupiterPos.addData(J_out[0], J_out[1], J_out[2], i);
 
             int F_ind = system.findObjectIndex("Fatty");
             double[] F_out = system.getObject(F_ind).getPosition();
-            storeFattyPos.addData(F_out[0], F_out[1], F_out[2], i);            
+            //storeFattyPos.addData(F_out[0], F_out[1], F_out[2], i);            
             //end NEW loop
         }
         
         //storeEarthPos.output();
-        storeSunPos.writeToCSV("Sun_data.csv");
-        storeEarthPos.writeToCSV("Earth_data.csv");
-        storeJupiterPos.writeToCSV("Jupiter_data.csv");
-        storeFattyPos.writeToCSV("Fatty_data.csv");
+        //storeSunPos.writeToCSV("Sun_data.csv");
+        //storeEarthPos.writeToCSV("Earth_data.csv");
+        //storeJupiterPos.writeToCSV("Jupiter_data.csv");
+        //storeFattyPos.writeToCSV("Fatty_data.csv");
         
         // show the applet where our methods are, to help it find the settings, setup and draw methods
         PApplet.main(new String[]{runsimulation.RunSimulationLoop.class.getName()});
