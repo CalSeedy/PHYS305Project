@@ -23,7 +23,7 @@ public class RunSimulationRealTime extends PApplet {
     // create a 1D array of times
     float[] times = new float[n];
     
-    double timestep = 1*(24*60*60); //
+    double timestep = 3*(24*60*60); //
     
     Data storeSystem = new Data(n, timestep, names);
     
@@ -246,7 +246,8 @@ public class RunSimulationRealTime extends PApplet {
         double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
         double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.};
 
-        //sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 500, true);
+        //sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, true);
+        sys.generateAsteroidCircle(0.,0.,0., rJ, 300, false);
         //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
         //sys.addObject(Fatty); //adding Fatty to the solar system
         /*
@@ -396,7 +397,7 @@ public class RunSimulationRealTime extends PApplet {
                 }
             }
             sys.stepRK4(timestep);
-            
+            sys.cleanAsteroids();
             sys.Hits.checkHit(sys);
             // after we display each object, increment the step we are on
             a++;

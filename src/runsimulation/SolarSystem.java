@@ -545,6 +545,62 @@ public class SolarSystem {
         }
     }
     
+    
+    public void generateAsteroidCircle(double x_in, double y_in, double z_in, double radius, int N, boolean target){
+        Random rand = new Random();
+        for (int i = 0; i < N; i++){
+            double x, y, z, dx, dy, dz;
+            double theta = rand.nextDouble() * Math.PI * 2;
+            double phi = rand.nextDouble() * Math.PI;
+            double r = rand.nextDouble()*(N * 148.28e7 / (Math.PI * 2)) + radius ;
+            
+            x = x_in + r*Math.cos(theta);//*Math.sin(phi);
+            y = y_in + r*Math.sin(theta);//*Math.sin(phi);
+            z = z_in;// + r*Math.cos(phi);
+            
+            double[] a_pos = {x, y, z};
+            double[] a_vel = {0., 0., 0.};
+            double vx, vy, vz;
+
+            if (target){
+                // Find out where the Earth is
+                int ind = findObjectIndex("Earth");
+                Body E = getObject(ind);
+                double[] E_pos = E.getPosition();
+                // create a velocity such that the asteroid heads towards Earth
+                vx = (a_pos[0] - E_pos[0])/ 1e8;
+                vy = -(a_pos[1] - E_pos[1])/ 1e8; //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
+                vz = 0.;//(a_pos[2] - E_pos[2])/ 1e7;
+                a_vel[0] = vx;
+                a_vel[1] = vy;
+                a_vel[2] = vz;
+            } else {
+                vx = -x / 5e7;
+                vy = -y / 5e7;
+                vz = -z / 5e7;
+                a_vel[0] = vx;
+                a_vel[1] = vy;
+                a_vel[2] = vz;
+                
+            }
+            
+            // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
+            double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+            
+            // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
+            // Volume of a sphere = 4/3 * PI * r^3
+            double a_mass = 5e3 *(4./3.) * Math.PI * a_radius * a_radius * a_radius;
+            Body ast = new Body(a_pos, a_vel, a_mass, a_radius, String.format("Asteroid%d", astNum));
+            
+            // add the asteroid to the system and increment the number of asteroids
+            addObject(ast);
+            astNum++; 
+            
+        }
+    }
+    
+    
+    
     public void cleanAsteroids(){
         for(Body b : objects){
             if (b.isAsteroid){
