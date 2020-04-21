@@ -2,6 +2,7 @@ package runsimulation;
 
 import processing.core.*;
 import java.util.Random;
+import processing.event.MouseEvent;
 
 // add "extends PApplet" to make our class an extension of PApplet, which lets us call their methods
 // and inherit all their properties
@@ -9,7 +10,7 @@ public class RunSimulationRealTime extends PApplet {
     final static double G = 6.67e-11;
     SolarSystem sys;
     Hit hits;
-    boolean elliptical = true;
+    boolean elliptical = false;
     // override settings method in Processing to have the settings we want
     @Override
     public void settings() {
@@ -107,80 +108,80 @@ public class RunSimulationRealTime extends PApplet {
         //Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         //system.addObject(Fatty); //adding Fatty to the solar system
            
-        //double[] Mercury_pos = {2.28E11, 0., 0.}; //Mercury semi major axis. Not updated values yet!
-        double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
-        //double[] Mercury_vel = {0., 24070., 0.};
-        double[] Mercury_vel = {0., 26500., 0.}; //Max
+        double[] Mercury_pos = {2.28E11, 0., 0.}; //Mercury semi major axis. Not updated values yet!
+        //double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
+        double[] Mercury_vel = {0., 24070., 0.};
+        //double[] Mercury_vel = {0., 26500., 0.}; //Max
         Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, 2439.7e+3, "Mercury"); //mass, mean radius
         Mercury.setEccentricity(0.2056);
         sys.addObject(Mercury);
 
 
-        //double[] V_pos = {1.08E11, 0., 0.}; //Venus semi major axis. Not updated values yet!
-        double[] V_pos = {1.07E11, 0., 0.}; //Perihelion
-        //double[] V_vel = {0., 35.02e3, 0.};
-        double[] V_vel = {0., 3.53E+04, 0.}; //Max
+        double[] V_pos = {1.08E11, 0., 0.}; //Venus semi major axis. Not updated values yet!
+        //double[] V_pos = {1.07E11, 0., 0.}; //Perihelion
+        double[] V_vel = {0., 35.02e3, 0.};
+        //double[] V_vel = {0., 3.53E+04, 0.}; //Max
         Body Venus = new Body(V_pos, V_vel, 4.8675E24, 6051.8e3, "Venus"); //mass, mean radius
         Venus.setEccentricity(0.0068);
         sys.addObject(Venus);
 
 
-        //double[] E_pos = {1.495978707e11, 0., 0.}; //Average radius of orbit
-        double[] E_pos = {1.52E11, 0., 0.}; //Perihelion
-        //double[] E_vel = {0., 29780., 0.}; //Mean. Originally set as 29.78e3 m/s
-        double[] E_vel = {0., 30290., 0.}; //Max
+        double[] E_pos = {1.495978707e11, 0., 0.}; //Average radius of orbit
+        //double[] E_pos = {1.52E11, 0., 0.}; //Perihelion
+        double[] E_vel = {0., 29780., 0.}; //Mean. Originally set as 29.78e3 m/s
+        //double[] E_vel = {0., 30290., 0.}; //Max
         Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         Earth.setEccentricity(0.0167086);
         sys.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
 
-        //double[] Mars_pos = {2.28E11, 0., 0.}; //Mars semi major axis
-        double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
-        //double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
-        double[] Mars_vel = {0., 2.65E04, 0.}; //Max
+        double[] Mars_pos = {2.28E11, 0., 0.}; //Mars semi major axis
+        //double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
+        double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
+        //double[] Mars_vel = {0., 2.65E04, 0.}; //Max
         Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, 3389.5e+3, "Mars"); //mass, mean radius
         Mars.setEccentricity(0.0934);
         sys.addObject(Mars);
 
 
-        //double[] J_pos = {7.78574E11, 0., 0.}; //Average
-        double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
-        //double[] J_vel = {0., 13.07e3, 0.}; //Average velocity
-        double[] J_vel = {0., 13.07e3, 0.}; //Max
+        double[] J_pos = {7.78574E11, 0., 0.}; //Average
+        //double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
+        double[] J_vel = {0., 13.07e3, 0.}; //Average velocity
+        //double[] J_vel = {0., 13.07e3, 0.}; //Max
         Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
         Jupiter.setEccentricity(0.0484);
         sys.addObject(Jupiter); //adding Jupiter to the solar system       
 
 
-        //double[] S_pos = {14.3353E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
-        double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
-        //double[] S_vel = {0., 9680., 0.}; //Mean
-        double[] S_vel = {0., 10180., 0.}; //Max
+        double[] S_pos = {14.3353E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
+        //double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
+        double[] S_vel = {0., 9680., 0.}; //Mean
+        //double[] S_vel = {0., 10180., 0.}; //Max
         Body Saturn = new Body(S_pos, S_vel, 5.6834E26, 58232E3, "Saturn"); //mass, mean radius
         Saturn.setEccentricity(0.0542);
         sys.addObject(Saturn);
 
 
-        //double[] U_pos = {28.7246E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
-        double[] U_pos = {2.74E+12, 0., 0.}; //Perihelion
-        //double[] U_vel = {0., 6.80E3, 0.};
-        double[] U_vel = {0., 7110.0, 0.}; //Max
+        double[] U_pos = {28.7246E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
+        //double[] U_pos = {2.74E+12, 0., 0.}; //Perihelion
+        double[] U_vel = {0., 6.80E3, 0.};
+        //double[] U_vel = {0., 7110.0, 0.}; //Max
         Body Uranus = new Body(U_pos, U_vel, 8.6813E25, 25362E3, "Uranus"); //mass, mean radius
         Uranus.setEccentricity(0.0472);
         sys.addObject(Uranus);
 
 
-        //double[] N_pos = {44.9506E11, 0., 0.}; //Semi major axis
-        double[] N_pos = {444445E+7, 0., 0.}; //Perihelion
-        //double[] N_vel = {0., 5430., 0.}; //Mean
-        double[] N_vel = {0., 5500., 0.0}; //Max
+        double[] N_pos = {44.9506E11, 0., 0.}; //Semi major axis
+        //double[] N_pos = {444445E+7, 0., 0.}; //Perihelion
+        double[] N_vel = {0., 5430., 0.}; //Mean
+        //double[] N_vel = {0., 5500., 0.0}; //Max
         Body Neptune = new Body(N_pos, N_vel, 1.02413E26, 24622000, "Neptune"); //mass, mean radius
         Neptune.setEccentricity(0.0086);
         sys.addObject(Neptune);
 
-        //double[] P_pos = {59.0638E+11, 0., 0.}; //Semi major axis
-        double[] P_pos = {443682E+7, 0., 0.}; //Perihelion
-        //double[] P_vel = {0., 4670, 0.}; //Mean
-        double[] P_vel = {0., 6100, 0.}; //Max
+        double[] P_pos = {59.0638E+11, 0., 0.}; //Semi major axis
+        //double[] P_pos = {443682E+7, 0., 0.}; //Perihelion
+        double[] P_vel = {0., 4670, 0.}; //Mean
+        //double[] P_vel = {0., 6100, 0.}; //Max
         Body Pluto = new Body(P_pos, P_vel, 1.303E22, 1187000, "Pluto"); //mass, mean radius
         Pluto.setEccentricity(0.2488);
         sys.addObject(Pluto);
@@ -247,7 +248,7 @@ public class RunSimulationRealTime extends PApplet {
         double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.};
 
         //sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, true);
-        sys.generateAsteroidCircle(0.,0.,0., rJ, 300, false);
+        sys.generateAsteroidCircle(0.,0.,0., rJ, 1000, false);
         //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
         //sys.addObject(Fatty); //adding Fatty to the solar system
         /*
@@ -309,7 +310,8 @@ public class RunSimulationRealTime extends PApplet {
         */
         
         sys.genHitArray();
-        
+        translate(width/2.0f, height/2.0f);
+        pushMatrix();
     }
     
     // create a counter to keep track of the set of data we want to plot
@@ -321,6 +323,8 @@ public class RunSimulationRealTime extends PApplet {
     // "frameRate(X)" method, X is the numebr of frames per second
     @Override
     public void draw() {
+        // translate the origin of the screen to the centre (rather than the top left)
+        
         
         // set the background colour to be white
         background(255);
@@ -336,11 +340,9 @@ public class RunSimulationRealTime extends PApplet {
             textSize(20);
             // add some text at the position x = 4px, y = 30px which shows the time in days to 2d.p.
             text(String.format("Time: %.2f days", t), 4,30);
-
-            // translate the origin of the screen to the centre (rather than the top left)
-            translate(width/2.0f, height/2.0f);
             //scale(Math.abs(1.5f*(float)Math.sin(a/500.f)) + 1 * scalePlot);
             // set the stroke weight (i.e. the outlining) to 0
+            popMatrix();
             Body[] objs = sys.getObjects();
             // for every object (other than the Sun)
             int p = 0;
@@ -407,6 +409,26 @@ public class RunSimulationRealTime extends PApplet {
             // set the current position to be 0, looping the data
             a = 0;
         }
+        pushMatrix();
+    }
+    
+    @Override
+    public void mouseWheel(MouseEvent event){
+        float e = event.getCount();
+        if (scalePlane - e > 0.0f){
+            scalePlane -= e;
+        } else {
+            scalePlane -= e/10.0f;
+        }
+        
+        
+    }
+    
+    @Override
+    public void mouseDragged(){
+        popMatrix();
+        translate(mouseX-pmouseX, mouseY-pmouseY);
+        pushMatrix();
     }
     
     public static void main(String[] args) {

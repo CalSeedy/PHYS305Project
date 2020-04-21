@@ -606,7 +606,7 @@ public class SolarSystem {
             if (b.isAsteroid){
                 double[] pos = b.getPosition();
                 double d = magnitude(pos);
-                if (d >= 1e13){
+                if (d >= 1.2e13){
                     removeObject(findObjectIndex(b.name));
                 }
             }
