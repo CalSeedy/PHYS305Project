@@ -5,6 +5,7 @@ package runsimulation;
 class Hit {
 
     int [] hits;   //will store the number of hits on each object
+    int [] nearMisses;   //will store the number of nearMisses on each object
     String[] planetNames;
     
     int[] planetIndexes;
@@ -22,6 +23,7 @@ class Hit {
         int[] idxs = new int[objs.length - c];
         //maybe create an aray of planet names
         hits = new int [names.length]; //objects.length
+        nearMisses = new int [names.length]; //objects.length
         //for (int i : hits){
         //    i = 0;
         //}
@@ -37,13 +39,20 @@ class Hit {
         Body[] objs = sys.getObjects();
         String[] names = new String[planetNames.length];
         int[] idxs = new int[planetIndexes.length];
+        int[] misses = new int[planetIndexes.length];
         int k = 0;
         for (Body b : objs){
             if (!b.isAsteroid){
                 names[k] = b.name;
                 idxs[k] = sys.findObjectIndex(b.name);
+                misses[k] = nearMisses[idxs[k]];
+                k++;
             }
         }
+        
+        planetNames = names;
+        planetIndexes = idxs;
+        nearMisses = misses;
     }
     
     private int getIndex(Body[] arr, String identifier){
@@ -97,10 +106,17 @@ class Hit {
                             // do stuff for planet-planet collisions
                         }
                     } else if (d <= 1.5*radii){
-                        if (b1.isAsteroid){
+                        if (b1.isAsteroid && !b2.isAsteroid){
                             //System.out.println(String.format("%e: %s barely passed by %s", sys.time, b1.name, b2.name));
-                        } else {
+                            int idx = sys.findObjectIndex(b2.name); 
+                            nearMisses[idx] ++;
+                        } else if (!b1.isAsteroid && b2.isAsteroid){
                             //System.out.println(String.format("%e: %s barely passed by %s", sys.time, b2.name, b1.name));
+                            int idx = sys.findObjectIndex(b1.name);
+                            nearMisses[idx] ++;
+                            
+                        } else {
+                            // do stuff for planet-planet collisions
                         }
                     }
                 }
@@ -109,7 +125,7 @@ class Hit {
         System.out.println("\n\n");
         for (int i = 0; i < hits.length; i++){
             
-            System.out.println(String.format("%s :  %d", planetNames[i], hits[i]));
+            System.out.println(String.format("%s :  %d (%d)", planetNames[i], hits[i], nearMisses[i]));
         }
     }
     

@@ -5,6 +5,8 @@ public class Body {
     private double[] velocity;              // velocity in x, y, z [m][s]^-1
     private double mass;                    // object's masss [kg]
     private double radius;                  // object's radius [m]
+    private double eccentricity;
+    private double[] periAphelion;
     public String name;                     // name to refer to object
     public boolean isAsteroid = false;
     
@@ -39,6 +41,9 @@ public class Body {
         position = pos_in;
         velocity = vel_in;
         name = name_in;
+        periAphelion = new double[2];
+        periAphelion[0] = 0.;
+        periAphelion[1] = 0.;
         if (name.contains("Asteroid")){
             isAsteroid = true;
         }
@@ -132,6 +137,14 @@ public class Body {
         return p;
     }
     
+    public double getEccentricity(){
+        return eccentricity;
+    }
+    
+    public void setEccentricity(double e){
+        eccentricity = e;
+    }
+    
     public void updateMass(double m){ //add a mass to th body's mass. this must be called before updateVelocity when two bodies collide
         mass += m;
     }
@@ -142,5 +155,21 @@ public class Body {
         double vy = momentum[1] / getMass();
         double vz = momentum[2] / getMass();
         setVelocity(vx, vy, vz);
+    }
+    
+    public void setPerihelion(double peri){
+        periAphelion[0] = peri;
+    }
+    
+    public void setAphelion(double ap){
+        periAphelion[1] = ap;
+    }
+    
+    public double getPerihelion(){
+        return periAphelion[0];
+    }
+    
+    public double getAphelion(){
+        return periAphelion[1];
     }
 }
