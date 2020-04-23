@@ -122,78 +122,27 @@ class Hit {
                 }
             }       
         }
+    }
+    
+    public int[] getHits() {
+        return hits;
+    }
+    
+    public int[] getMisses() {
+        return nearMisses;
+    }
+    
+    public String[] getNames() {
+        return planetNames;
+    }
+    
+    
+    public void display(){
         System.out.println("\n\n");
         for (int i = 0; i < hits.length; i++){
-            
             System.out.println(String.format("%s :  %d (%d)", planetNames[i], hits[i], nearMisses[i]));
         }
     }
-    
-    /*
-    public void Hit(){
-        
-        
-        for (int j = 0; j < objects.length; j++){
-            for (int i = 0; i < objects.length; i++){
-                double d = objects[i].distanceToBody(objects[j]);
-                double radii = objects[i].getRadius() + objects[j].getRadius();
-                if ( d <= radii){
-                    
-                    double m1 = objects[i].getMass();
-                    double m2 = objects[j].getMass();
-                    
-                    if (m1 / m2 > Math.pow(10,6)) { //if m2 is much smaller than m1
-                        //m2 will merge with m1 and transfer its momentum to m1
-
-                        double[] momentum1 = objects[i].getMomentum();
-                        double[] momentum2 = objects[j].getMomentum();
-                        double[] new_momentum =  {0.,0.,0.};
-                        new_momentum[0] = momentum1[0]+momentum2[0];
-                        new_momentum[1] = momentum1[1]+momentum2[1];
-                        new_momentum[2] = momentum1[2]+momentum2[2];
-                    
-                        double new_mass = objects[i].getMass()+objects[j].getMass();
-                    
-                        String name1 = objects[j].getName(); //the names of the objects which have collided
-                        String name2 = objects[i].getName();
-                        
-                        objects[j].updateMass(objects[i].getMass());
-                        objects[j].updateVelocity(new_momentum);
-                        
-                        //Scalett is working on the below
-                        ///*if (name1.indexOf("Asteroid") == -1){ //if the string "Asteroid" is not in the name
-                            //if name1 is in the list 'names':
-                            if (names.contains(name1)){ //google isn't helping me!!! I want to see whether this list contains name1
-                                //find the index
-                                //add 1 to the same index in the hit list
-                            }
-                            //else:
-                                //add the name to the list 'names'
-                                
-                                //find the index of that name
-                                //add 1 to the same index in the hit list
-                                //OR add the same to the end of the 'names' list and add 1 to the end of the 'hits' list
-                                names.add(name1); //add the name to the end of the 'names' list
-                                hits.add(1); //add one to the end of the 'hits' list
-                        }
-                        */
-                        /*
-                        removeObject(i);
-
-                        //hits[j] ++;
-                        //hits[i] ++;
-                    
-                    //update the mass and momentum x of the first body to include the mass of the second
-                    //update the speed of the first body
-                    //delete the seocnd body
-                    //record what body hit what
-                    //or should I just delete the body with 'asteroid' in its name??
-                    }
-                }
-            }
-        }
-    }
-    */
-}            
+}        
     
 

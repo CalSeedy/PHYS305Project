@@ -571,9 +571,9 @@ public class SolarSystem {
                 vx = (a_pos[0] - E_pos[0])/ 1e8;
                 vy = -(a_pos[1] - E_pos[1])/ 1e8; //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
                 vz = 0.;//(a_pos[2] - E_pos[2])/ 1e7;
-                a_vel[0] = vx;
-                a_vel[1] = vy;
-                a_vel[2] = vz;
+                a_vel[0] = vx/10.;
+                a_vel[1] = vy/10.;
+                a_vel[2] = vz/10.;
             } else {
                 vx = -x / 5e7;
                 vy = -y / 5e7;
@@ -606,7 +606,7 @@ public class SolarSystem {
             if (b.isAsteroid){
                 double[] pos = b.getPosition();
                 double d = magnitude(pos);
-                if (d >= 1.2e13){
+                if (d >= 59.0638E+11 *2.5){ // 2.5 * pluto orbit radius
                     removeObject(findObjectIndex(b.name));
                 }
             }

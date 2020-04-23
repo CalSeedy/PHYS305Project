@@ -108,9 +108,9 @@ public class RunSimulationRealTime extends PApplet {
         //Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         //system.addObject(Fatty); //adding Fatty to the solar system
            
-        double[] Mercury_pos = {2.28E11, 0., 0.}; //Mercury semi major axis. Not updated values yet!
+        double[] Mercury_pos = {5.79E+10, 0., 0.}; //Mercury semi major axis. Not updated values yet!
         //double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
-        double[] Mercury_vel = {0., 24070., 0.};
+        double[] Mercury_vel = {0., 4.74E+04, 0.};
         //double[] Mercury_vel = {0., 26500., 0.}; //Max
         Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, 2439.7e+3, "Mercury"); //mass, mean radius
         Mercury.setEccentricity(0.2056);
@@ -243,12 +243,12 @@ public class RunSimulationRealTime extends PApplet {
         }
         
         int thickness = 200;
-        double[] pJ = Jupiter.getPosition();
+        double[] pJ = Pluto.getPosition();
         double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
-        double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.};
+        //double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.};
 
         //sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, true);
-        sys.generateAsteroidCircle(0.,0.,0., rJ, 1000, false);
+        sys.generateAsteroidCircle(0.,0.,0., 1.5*rJ, 1000, false);
         //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
         //sys.addObject(Fatty); //adding Fatty to the solar system
         /*
