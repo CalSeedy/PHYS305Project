@@ -371,18 +371,51 @@ public class RunSimulationRealTime extends PApplet {
                     // set the fill colour to be black
                     fill(165, 42, 42);
                     ellipse(xpos, -ypos, 3*scalePlot, 3*scalePlot);
-                } else if (name.equals("Earth")) {
-                    // fill(red, green, blue, alpha)
-                    // set the fill colour to be black
+               }else if (name.equals("Earth")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
                     fill(101, 215, 255);
-                    ellipse(xpos, -ypos, 5*scalePlot, 5*scalePlot);
-                    
+                    ellipse(xpos, -ypos, 5, 5);
+                }else if (name.equals("Mercury")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(126, 125, 108);
+                    ellipse(xpos, -ypos, 2, 2);
+                }else if (name.equals("Venus")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(251, 189, 195);
+                    ellipse(xpos, -ypos, 5, 5);
+                }else if (name.equals("Mars")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(247, 0, 0);
+                    ellipse(xpos, -ypos, 5, 5);
                 }else if (name.equals("Jupiter")) {
-                    // fill(red, green, blue, alpha)
-                    // set the fill colour to be black
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
                     fill(214, 101, 50);
-                    ellipse(xpos, -ypos, 10*scalePlot, 10*scalePlot);
-                    
+                    ellipse(xpos, -ypos, 10, 10);
+                }else if (name.equals("Saturn")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(249, 212, 80);
+                    ellipse(xpos, -ypos, 8, 8);
+                }else if (name.equals("Uranus")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(147, 212, 180);
+                    ellipse(xpos, -ypos, 7, 7);
+                }else if (name.equals("Neptune")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(120, 114, 180);
+                    ellipse(xpos, -ypos, 7, 7);
+                }else if (name.equals("Pluto")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(127, 114, 42);
+                    ellipse(xpos, -ypos, 3, 3);
                 }else {
                     // fill(red, green, blue, alpha)
                     // set the fill colour to be black
