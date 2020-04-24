@@ -471,8 +471,8 @@ public class SolarSystem {
         vz = ((z - E_pos[2])/1e7) * rand.nextGaussian() + ((x - E_pos[2])/1e6);
         double[] a_vel = {vx , vy, vz};
         
-        // set the asteroid's radius such that it is a Gaussian about (50 +/- 30)m
-        double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+        // set the asteroid's radius such that it is a Gaussian about (1000 +/- 100)m
+        double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
         
         // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
         // Volume of a sphere = 4/3 * PI * r^3
@@ -531,7 +531,7 @@ public class SolarSystem {
             }
             
             // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
-            double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+            double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
@@ -585,7 +585,7 @@ public class SolarSystem {
             }
             
             // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
-            double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+            double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
