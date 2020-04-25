@@ -12,8 +12,12 @@ public class SolarSystem {
     
     private Body[] objects;         // store a array of all bodies in the system
     private int astNum = 0;         // store number of asteroids in the system
+    private double[] periods;
+    private double[] times;
+    private double[][] prevDs;
     public double time = 0.; 
     public Hit Hits;
+    
     
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
@@ -144,6 +148,72 @@ public class SolarSystem {
         theta = Math.acos((dot(pos1, pos2))/(mag1*mag2));
         
         return theta;
+    }
+    
+    public void initPeriods(){
+        int i = 0;
+        for (Body ob : objects){
+            if (!ob.name.contains("Asteroid") && !ob.name.equals("Sun")){
+                ob.setInitialPos(ob.getPosition());
+                i++;
+            }
+        }
+        
+        periods = new double[i];
+        times = new double[i];
+        prevDs = new double[i][3];
+        
+        for (int j = 0; j < i; j++){
+            periods[j] = 0.;
+            for (int k = 0; k < prevDs[0].length; k++){
+                prevDs[j][k] = 1e10;
+            }
+        }
+    }
+    
+    
+    public void updatePeriods(double dt){
+        int i = 0;
+        for (Body obj : objects){
+            if (!obj.name.contains("Asteroid") && !obj.name.equals("Sun")){
+                
+                double[] pos = obj.getPosition();
+                double[] init = obj.getInitialPos();
+                double[] dif = new double[pos.length];
+                /*
+                if (i == 0){
+                    System.out.println(String.format("Initial: %g, %g, %g", init[0], init[1], init[2]));
+                    System.out.println(String.format("Current: %g, %g, %g", pos[0], pos[1], pos[2]));
+                }*/
+                for(int j = 0; j < pos.length; j++){
+                    dif[j] = pos[j] - init[j];
+                }
+                //System.out.println(String.format("%g", magnitude(dif)));
+                double a, b;
+                a = prevDs[i][1];
+                b = prevDs[i][0];
+                prevDs[i][2] = a;
+                prevDs[i][1] = b;
+                prevDs[i][0] = magnitude(dif);
+                if ((prevDs[i][1] < prevDs[i][0]) && (prevDs[i][1] < prevDs[i][2])){
+                    periods[i] = times[i];
+                    times[i] = 0.;
+                }
+                //System.out.println(String.format("%s: [%g, %g, %g]", objects[1].name, prevDs[0][0], prevDs[0][1], prevDs[0][2]));
+                i++;
+            }
+            
+        }
+        for (int j = 0; j<times.length; j++){
+            times[j] += dt;
+        }
+    }
+    
+    public void printPeriods(double timestep){
+        for (int i = 0; i < periods.length; i++){
+            double mag = magnitude(objects[i+1].getVelocity());
+            System.out.println(String.format("%s: %f +- %f days", objects[i+1].name, periods[i]/86400, (timestep)/86400));
+        }
     }
     
     // method to find the index of a Body in bodies through the chosen name
@@ -320,7 +390,7 @@ public class SolarSystem {
         double[] k = new double[fvec.length];
         int count = 0;
         for (double val : fvec){
-            k[count] = val*dt/2;
+            k[count] = val*dt;
             count++;
         }
         
@@ -328,22 +398,22 @@ public class SolarSystem {
         
     }
     
-    private double[][] nextState(double[][] initial, double[][] other, double[] k, int step){
+    private double[][] nextState(double[][] initial, double[][] other, double[] k, double dt, int step){
         double multiple;
-        switch(step){
-            
+        switch (step) {
             case 0:
-                multiple = 0.0;
+                multiple = .0;
+                break;
             case 1:
-                multiple = 0.5;
             case 2:
                 multiple = 0.5;
+                break;
             case 3:
-                multiple = 1.0;
-                
+                multiple = 1.;
+                break;
             default:
-                multiple = 0.0;
-                
+                multiple = 0;
+                break;
         }
         
         int count = 0;
@@ -380,17 +450,17 @@ public class SolarSystem {
         
         // calculating k1 and second state
         double[] k1 = calculateK(state_initial, timestep);
-        double[][] state_second = nextState(state_initial, state_initial, k1, 1);
+        double[][] state_second = nextState(state_initial, state_initial, k1, timestep, 0);
 
         
         // calculating k2 and the 3rd state
         double[] k2 = calculateK(state_second, timestep);
-        double[][] state_third = nextState(state_initial, state_second, k2, 2);
+        double[][] state_third = nextState(state_initial, state_second, k2, timestep, 1);
         
         
         // calculating k3 and 4th state
         double[] k3 = calculateK(state_third, timestep);
-        double[][] state_fourth = nextState(state_initial, state_third, k2, 3);
+        double[][] state_fourth = nextState(state_initial, state_third, k2, timestep, 2);
         
         
         // calculating k4 and final state
@@ -401,7 +471,7 @@ public class SolarSystem {
         for (double[] state : state_initial){
             for (int i = 0; i < state.length; i++){
                 if (i != 6 || i != 7){
-                    state_final[count][i] = state[i] + (1./6.)*k1[count * state.length + i] + (1./3.)*k2[count*state.length + i] + (1./3.)*k3[count*state.length + i] + (1./6.)*k4[count*state.length + i]; 
+                    state_final[count][i] = state[i] + (1./6.)*k1[count * state.length + i] + (1./3.)*k2[count*state.length + i] + (1./3.)*k3[count*state.length + i] + (1./6.)*k4[count*state.length + i];
                 } else {
                     state_final[count][i] = state_initial[count][i];
                 } 

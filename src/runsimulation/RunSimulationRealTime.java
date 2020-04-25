@@ -20,11 +20,11 @@ public class RunSimulationRealTime extends PApplet {
     
     // create an array of file names that we want to open and display
     String[] names = {"Sun","Mercury","Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};//"Fatty_data.csv"};
-    int n = 2000; // number of steps
+    int n = 5000; // number of steps
     // create a 1D array of times
     float[] times = new float[n];
     
-    double timestep = 3*(24*60*60); //
+    double timestep = 1*(24*60*60); //
     
     Data storeSystem = new Data(n, timestep, names);
     
@@ -310,6 +310,7 @@ public class RunSimulationRealTime extends PApplet {
         */
         
         sys.genHitArray();
+        sys.initPeriods();
         translate(width/2.0f, height/2.0f);
         pushMatrix();
     }
@@ -330,7 +331,7 @@ public class RunSimulationRealTime extends PApplet {
         background(255);
         
         // check if we have reached the end of the data
-        if (a < 2000){//< 730){
+        if (a < n){//< 730){
             // get the current time in the simulation
             float t = (float)(timestep*a / 86400);
             // load the Consolas font and set the text font style to be that PFont
@@ -432,10 +433,18 @@ public class RunSimulationRealTime extends PApplet {
                 }
             }
             sys.stepRK4(timestep);
+            //sys.stepEuler(timestep);
             sys.cleanAsteroids();
             sys.Hits.checkHit(sys);
+            sys.updatePeriods(timestep);
+            
+            if (a % 100 == 0 && a != 0) {
+                sys.printPeriods(timestep);
+            }
             // after we display each object, increment the step we are on
             a++;
+            
+            
         // if we have reached the end of the data
         } else {
             storeSystem.writeToCSV("Simulation.csv");

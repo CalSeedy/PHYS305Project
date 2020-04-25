@@ -7,6 +7,7 @@ public class Body {
     private double radius;                  // object's radius [m]
     private double eccentricity;
     private double[] periAphelion;
+    private double[] initialPos;
     public String name;                     // name to refer to object
     public boolean isAsteroid = false;
     
@@ -30,6 +31,7 @@ public class Body {
         radius = radius_in;
         position = pos_in;
         velocity = vel_in;
+        initialPos = new double[3];
         name = "UnspecifiedObject";
     }
     
@@ -39,6 +41,7 @@ public class Body {
         mass = mass_in;     
         radius = radius_in;
         position = pos_in;
+        initialPos = new double[3];
         velocity = vel_in;
         name = name_in;
         periAphelion = new double[2];
@@ -171,5 +174,15 @@ public class Body {
     
     public double getAphelion(){
         return periAphelion[1];
+    }
+    
+    public double[] getInitialPos(){
+        return initialPos;
+    }
+    
+    public void setInitialPos(double[] pos){
+        initialPos[0] = pos[0];
+        initialPos[1] = pos[1];
+        initialPos[2] = pos[2];
     }
 }

@@ -208,6 +208,11 @@ public class RunSimulation {
             }
             */
         }
+        
+        for (int i = 0; i < totalHits.length; i++){
+            System.out.println(String.format("%s :  %d (%d)", names[i], totalHits[i], totalMisses[i]));
+        }
+        
     }
 }
     
