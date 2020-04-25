@@ -1,3 +1,4 @@
+
 package runsimulation;
 
 import java.util.Random;
@@ -5,12 +6,14 @@ import java.util.Random;
 // SolarSystem class manages all the objects that are inside the system,
 // handles the addition/removal of any objects and has the responsibility
 // of stepping all objects forward by 1 timestep with either Euler or RK4.
-public class SolarSystem{
+public class SolarSystem {
     
     final static double G = 6.67e-11; // Create a const. for G in SI [m]^3 [kg]^-1 [s]^-2 
     
     private Body[] objects;         // store a array of all bodies in the system
     private int astNum = 0;         // store number of asteroids in the system
+    public double time = 0.; 
+    public Hit Hits;
     
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
@@ -28,6 +31,7 @@ public class SolarSystem{
         
         // overwrite the null array
         objects = new_objects;
+        
     }
     
     
@@ -78,7 +82,12 @@ public class SolarSystem{
             }
         }
         // overwrite the stored array of Bodies
-        objects = new_objects;      
+        objects = new_objects; 
+    }
+    
+    public void genHitArray(){
+        Hit hit = new Hit(this);
+        Hits = hit;
     }
     
     // getter for the array of objects
@@ -92,16 +101,27 @@ public class SolarSystem{
     }
     
     // private method to return the magnitude of a 3D vector
-    private double magnitude(double[] vector){
+    public double magnitude(double[] vector){
         // R = {x, y, z}, |R| = sqrt(x^2 + y^2 + z^2), |R|^2 = R.R
         // --> |R| = sqrt(R.R)
         return Math.sqrt(dot(vector, vector));
     }
     
     // private method to return the dot product of two 3D vectors
-    private double dot(double[] vector1, double[] vector2){
+    public double dot(double[] vector1, double[] vector2){
         // A.B = (A_x * B_x) + (A_y * B_y) + (A_z * B_z)
         return (vector1[0]*vector2[0] + vector1[1]*vector2[1] + vector1[2]*vector2[2]);
+    }
+    
+    public double[] cross(double[] vec1, double[] vec2){
+        double[] out = new double[3];
+        if (vec1.length == vec2.length && vec1.length == 3){
+            out[0] = (vec1[1]*vec2[2])-(vec1[2]*vec2[1]);
+            out[1] = -(vec1[0]*vec2[2])-(vec1[2]*vec2[0]);
+            out[2] = (vec1[0]*vec2[1])-(vec1[1]*vec2[0]);
+            
+        }
+        return out;
     }
     
     
@@ -190,18 +210,20 @@ public class SolarSystem{
                 }                
             }
            
-    for (int i = 0; i < accelerations.length; i++){
-        v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
-        v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
-        v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
-        
-        positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
-        positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
-        positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
-        
-        objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
-        objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
+        for (int i = 0; i < accelerations.length; i++){
+            v2[i][0] = v1[i][0] + accelerations[i][0]*timestep; //the final acceleration of m1 in the x-direction
+            v2[i][1] = v1[i][1] + accelerations[i][1]*timestep;
+            v2[i][2] = v1[i][2] + accelerations[i][2]*timestep;  
+
+            positions2[i][0] = position1[i][0] + v2[i][0]*timestep; //the final velocity of m1 in the x-direction
+            positions2[i][1] = position1[i][1] + v2[i][1]*timestep;                        
+            positions2[i][2] = position1[i][2] + v2[i][2]*timestep;
+
+            objects[i].setPosition(positions2[i][0], positions2[i][1], positions2[i][2]); //put the final position into the array 
+            objects[i].setVelocity(v2[i][0], v2[i][1], v2[i][2]); //put the final velocity into the array
         }
+        
+        time += timestep;
     }    
       
     
@@ -395,7 +417,7 @@ public class SolarSystem{
         }
         
         
-        
+        time += timestep;
     }
     
     // method that creates a new instance of an asteroid (which is just a Body)
@@ -449,8 +471,8 @@ public class SolarSystem{
         vz = ((z - E_pos[2])/1e7) * rand.nextGaussian() + ((x - E_pos[2])/1e6);
         double[] a_vel = {vx , vy, vz};
         
-        // set the asteroid's radius such that it is a Gaussian about (50 +/- 30)m
-        double a_radius = rand.nextGaussian()*33. + 50.;
+        // set the asteroid's radius such that it is a Gaussian about (1000 +/- 100)m
+        double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
         
         // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
         // Volume of a sphere = 4/3 * PI * r^3
@@ -483,7 +505,7 @@ public class SolarSystem{
         Random rand = new Random();
         for (int i = 0; i < N; i++){
             double x, y, z;
-            x = x_in - rand.nextDouble()*(thickness*148.28e7);
+            x = x_in - rand.nextDouble()*(thickness*148.28e7)*0.99;
             y = y_in - rand.nextDouble()*(2.*7.78574E11);
             z = z_in; // can do same as above but with some "width/height"
             
@@ -496,11 +518,10 @@ public class SolarSystem{
                 int ind = findObjectIndex("Earth");
                 Body E = getObject(ind);
                 double[] E_pos = E.getPosition();
-
                 // create a velocity such that the asteroid heads towards Earth
-                vx = (((x - E_pos[0])) * rand.nextGaussian() + ((x - E_pos[0]))/100) / 1e3;
-                vy = (((y - E_pos[1])) * rand.nextGaussian() + ((x - E_pos[1]))/100) / 1e3;
-                vz = (((z - E_pos[2])) * rand.nextGaussian() + ((x - E_pos[2]))/100) / 1e3;
+                vx = (a_pos[0] - E_pos[0])/ 1e8;
+                vy = -(a_pos[1] - E_pos[1])/ 1e8; //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
+                vz = 0.;//(a_pos[2] - E_pos[2])/ 1e7;
                 a_vel[0] = vx;
                 a_vel[1] = vy;
                 a_vel[2] = vz;
@@ -510,7 +531,7 @@ public class SolarSystem{
             }
             
             // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
-            double a_radius = rand.nextGaussian()*33. + 50.;
+            double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
@@ -525,4 +546,75 @@ public class SolarSystem{
     }
     
     
+    public void generateAsteroidCircle(double x_in, double y_in, double z_in, double radius, int N, boolean target){
+        Random rand = new Random();
+        for (int i = 0; i < N; i++){
+            double x, y, z, dx, dy, dz;
+            double theta = rand.nextDouble() * Math.PI * 2;
+            double phi = rand.nextDouble() * Math.PI;
+            double r = rand.nextDouble()*(N * 148.28e7 / (Math.PI * 2)) + radius ;
+            
+            x = x_in + r*Math.cos(theta);//*Math.sin(phi);
+            y = y_in + r*Math.sin(theta);//*Math.sin(phi);
+            z = z_in;// + r*Math.cos(phi);
+            
+            double[] a_pos = {x, y, z};
+            double[] a_vel = {0., 0., 0.};
+            double vx, vy, vz;
+
+            if (target){
+                // Find out where the Earth is
+                int ind = findObjectIndex("Earth");
+                Body E = getObject(ind);
+                double[] E_pos = E.getPosition();
+                // create a velocity such that the asteroid heads towards Earth
+                vx = (a_pos[0] - E_pos[0])/ 1e8;
+                vy = -(a_pos[1] - E_pos[1])/ 1e8; //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
+                vz = 0.;//(a_pos[2] - E_pos[2])/ 1e7;
+                a_vel[0] = vx/10.;
+                a_vel[1] = vy/10.;
+                a_vel[2] = vz/10.;
+            } else {
+                vx = -x / 5e7;
+                vy = -y / 5e7;
+                vz = -z / 5e7;
+                a_vel[0] = vx;
+                a_vel[1] = vy;
+                a_vel[2] = vz;
+                
+            }
+            
+            // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
+            double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
+            
+            // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
+            // Volume of a sphere = 4/3 * PI * r^3
+            double a_mass = 5e3 *(4./3.) * Math.PI * a_radius * a_radius * a_radius;
+            Body ast = new Body(a_pos, a_vel, a_mass, a_radius, String.format("Asteroid%d", astNum));
+            
+            // add the asteroid to the system and increment the number of asteroids
+            addObject(ast);
+            astNum++; 
+            
+        }
+    }
+    
+    
+    
+    public void cleanAsteroids(){
+        for(Body b : objects){
+            if (b.isAsteroid){
+                double[] pos = b.getPosition();
+                double d = magnitude(pos);
+                if (d >= 59.0638E+11 *2.5){ // 2.5 * pluto orbit radius
+                    removeObject(findObjectIndex(b.name));
+                }
+            }
+        }
+    }
+    
+    
+    public Hit getHits(){
+        return Hits;
+    }
 }
