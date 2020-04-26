@@ -3,8 +3,8 @@ package runsimulation;
 import java.util.Random;
 
 public class RunSimulation {
-    final static int ITERATIONS = 5;
-    final static int STEPS = 5000;
+    final static int ITERATIONS = 20;
+    final static int STEPS = 4000;
     
     final static double G = 6.67e-11;
     
@@ -24,16 +24,16 @@ public class RunSimulation {
         }
         
         
-        int A = 1000; // numb of asteroids
+        int A = 200; // numb of asteroids
+        double radScale = 5e2; //csaling constant for planet radii
         Data hitData = new Data(names, ITERATIONS, STEPS, timestep);
         for (int k = 0; k < ITERATIONS; k++){
             SolarSystem sys = new SolarSystem();
-            Hit hits;
             double[] Mercury_pos = {5.79E+10, 0., 0.}; //Mercury semi major axis. Not updated values yet!
             //double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
             double[] Mercury_vel = {0., 4.74E+04, 0.};
             //double[] Mercury_vel = {0., 26500., 0.}; //Max
-            Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, 2439.7e+3, "Mercury"); //mass, mean radius
+            Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, radScale*2439.7e+3, "Mercury"); //mass, mean radius
             Mercury.setEccentricity(0.2056);
             sys.addObject(Mercury);
 
@@ -42,7 +42,7 @@ public class RunSimulation {
             //double[] V_pos = {1.07E11, 0., 0.}; //Perihelion
             double[] V_vel = {0., 35.02e3, 0.};
             //double[] V_vel = {0., 3.53E+04, 0.}; //Max
-            Body Venus = new Body(V_pos, V_vel, 4.8675E24, 6051.8e3, "Venus"); //mass, mean radius
+            Body Venus = new Body(V_pos, V_vel, 4.8675E24, radScale*6051.8e3, "Venus"); //mass, mean radius
             Venus.setEccentricity(0.0068);
             sys.addObject(Venus);
 
@@ -51,7 +51,7 @@ public class RunSimulation {
             //double[] E_pos = {1.52E11, 0., 0.}; //Perihelion
             double[] E_vel = {0., 29780., 0.}; //Mean. Originally set as 29.78e3 m/s
             //double[] E_vel = {0., 30290., 0.}; //Max
-            Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
+            Body Earth = new Body(E_pos, E_vel, 5.9722e24, radScale*6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
             Earth.setEccentricity(0.0167086);
             sys.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
 
@@ -59,7 +59,7 @@ public class RunSimulation {
             //double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
             double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
             //double[] Mars_vel = {0., 2.65E04, 0.}; //Max
-            Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, 3389.5e+3, "Mars"); //mass, mean radius
+            Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, radScale*3389.5e+3, "Mars"); //mass, mean radius
             Mars.setEccentricity(0.0934);
             sys.addObject(Mars);
 
@@ -68,7 +68,7 @@ public class RunSimulation {
             //double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
             double[] J_vel = {0., 13.07e3, 0.}; //Average velocity
             //double[] J_vel = {0., 13.07e3, 0.}; //Max
-            Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
+            Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, radScale*69911e3, "Jupiter");
             Jupiter.setEccentricity(0.0484);
             sys.addObject(Jupiter); //adding Jupiter to the solar system       
 
@@ -77,7 +77,7 @@ public class RunSimulation {
             //double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
             double[] S_vel = {0., 9680., 0.}; //Mean
             //double[] S_vel = {0., 10180., 0.}; //Max
-            Body Saturn = new Body(S_pos, S_vel, 5.6834E26, 58232E3, "Saturn"); //mass, mean radius
+            Body Saturn = new Body(S_pos, S_vel, 5.6834E26, radScale*58232E3, "Saturn"); //mass, mean radius
             Saturn.setEccentricity(0.0542);
             sys.addObject(Saturn);
 
@@ -86,7 +86,7 @@ public class RunSimulation {
             //double[] U_pos = {2.74E+12, 0., 0.}; //Perihelion
             double[] U_vel = {0., 6.80E3, 0.};
             //double[] U_vel = {0., 7110.0, 0.}; //Max
-            Body Uranus = new Body(U_pos, U_vel, 8.6813E25, 25362E3, "Uranus"); //mass, mean radius
+            Body Uranus = new Body(U_pos, U_vel, 8.6813E25, radScale*25362E3, "Uranus"); //mass, mean radius
             Uranus.setEccentricity(0.0472);
             sys.addObject(Uranus);
 
@@ -95,7 +95,7 @@ public class RunSimulation {
             //double[] N_pos = {444445E+7, 0., 0.}; //Perihelion
             double[] N_vel = {0., 5430., 0.}; //Mean
             //double[] N_vel = {0., 5500., 0.0}; //Max
-            Body Neptune = new Body(N_pos, N_vel, 1.02413E26, 24622000, "Neptune"); //mass, mean radius
+            Body Neptune = new Body(N_pos, N_vel, 1.02413E26, radScale*24622000, "Neptune"); //mass, mean radius
             Neptune.setEccentricity(0.0086);
             sys.addObject(Neptune);
 
@@ -103,7 +103,7 @@ public class RunSimulation {
             //double[] P_pos = {443682E+7, 0., 0.}; //Perihelion
             double[] P_vel = {0., 4670, 0.}; //Mean
             //double[] P_vel = {0., 6100, 0.}; //Max
-            Body Pluto = new Body(P_pos, P_vel, 1.303E22, 1187000, "Pluto"); //mass, mean radius
+            Body Pluto = new Body(P_pos, P_vel, 1.303E22, radScale*1187000, "Pluto"); //mass, mean radius
             Pluto.setEccentricity(0.2488);
             sys.addObject(Pluto);
 
@@ -167,7 +167,7 @@ public class RunSimulation {
             double[] pJ = Pluto.getPosition();
             double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
             double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.}
-            sys.generateAsteroidCircle(0.,0.,0., rJ*2, A, true);
+            sys.generateAsteroidCircle(0.,0.,0., rJ*2, A, false);
             sys.genHitArray();
             //Data storeSystem = new Data(n, timestep, names);
             

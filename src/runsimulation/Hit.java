@@ -86,22 +86,24 @@ class Hit {
                 Body b1 = objects[i];
                 Body b2 = objects[j];
                 if (i != j){
-                    double d = b1.distanceToBody(b2);
+                    double d = Math.abs(b1.distanceToBody(b2));
                     double radii = b1.getRadius() + b2.getRadius();
 
                     if (d <= radii){
                         //System.out.println(String.format("%e: %s collided with %s", sys.time, b1.name, b2.name));
                         if (b1.isAsteroid && !b2.isAsteroid){
                             //System.out.println(String.format("\t %s was removed!", b1.name));
-                            sys.removeObject(sys.findObjectIndex(b1.name));
+                            
                             int idx = sys.findObjectIndex(b2.name); 
                             hits[idx] ++;
+                            
+                            sys.removeObject(sys.findObjectIndex(b1.name));
                         } else if (!b1.isAsteroid && b2.isAsteroid){
                             //System.out.println(String.format("\t %s was removed!", b2.name));
-                            sys.removeObject(sys.findObjectIndex(b2.name));
+                            
                             int idx = sys.findObjectIndex(b1.name);
                             hits[idx] ++;
-                            
+                            sys.removeObject(sys.findObjectIndex(b2.name));
                         } else {
                             // do stuff for planet-planet collisions
                         }

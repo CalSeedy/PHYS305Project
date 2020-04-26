@@ -224,51 +224,6 @@ public class SolarSystem {
         }
         
         time += timestep;
-    }    
-      
-    
-    public void Hit(){
-        int [] hits = new int[objects.length]; //will store the number of hits on each object
-        
-        for (int j = 0; j < objects.length; j++){
-            for (int i = 0; i < objects.length; i++){
-                double d = objects[i].distanceToBody(objects[j]);
-                double radii = objects[i].getRadius() + objects[j].getRadius();
-                if ( d <= radii){
-                    
-                    double m1 = objects[i].getMass();
-                    double m2 = objects[j].getMass();
-                    
-                    if (m1 / m2 > Math.pow(10,6)) { //if m2 is much smaller than m1
-                        //m2 will merge with m1 and transfer its momentum to m1
-
-                        double[] momentum1 = objects[i].getMomentum();
-                        double[] momentum2 = objects[j].getMomentum();
-                        double[] new_momentum =  {0.,0.,0.};
-                        new_momentum[0] = momentum1[0]+momentum2[0];
-                        new_momentum[1] = momentum1[1]+momentum2[1];
-                        new_momentum[2] = momentum1[2]+momentum2[2];
-                    
-                        double new_mass = objects[i].getMass()+objects[j].getMass();
-                    
-                        String name1 = objects[j].getName(); //the names of the objects which have collided
-                        String name2 = objects[i].getName();
-                        objects[j].updateMass(objects[i].getMass());
-                        objects[j].updateVelocity(new_momentum);
-                        removeObject(i);
-
-                        hits[j] ++;
-                        hits[i] ++;
-                    
-                    //update the mass and momentum x of the first body to include the mass of the second
-                    //update the speed of the first body
-                    //delete the seocnd body
-                    //record what body hit what
-                    //or should I just delete the body with 'asteroid' in its name??
-                    }
-                }
-            }
-        }
     }
     
     private double[] fvector(double[][] fullstate){
@@ -602,11 +557,14 @@ public class SolarSystem {
     
     
     public void cleanAsteroids(){
+        int idx = findObjectIndex("Pluto");
+        Body p = objects[idx];
+        double r = magnitude(p.getPosition());
         for(Body b : objects){
             if (b.isAsteroid){
                 double[] pos = b.getPosition();
                 double d = magnitude(pos);
-                if (d >= 59.0638E+11 *2.5){ // 2.5 * pluto orbit radius
+                if (d >= r * 2.5){ // 2.5 * pluto orbit radius
                     removeObject(findObjectIndex(b.name));
                 }
             }
