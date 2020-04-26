@@ -107,8 +107,6 @@ public class Data {
                 
         //add a loop for x, y and z to include and index, string.fomat
         //start NEW loop
-        //outputFile.print("x % [Au], y % [Au], z % [Au]"); // put indexes in at % signs, string.format
-        
         // Now make a loop to write the contents of the data to a CSV.
         
         for (int i = 0; i < times.length; i++) {
@@ -118,12 +116,6 @@ public class Data {
             } //also do stuff to this with indexes
             outputFile.print("\n");
         }
-        
-        
-        //for (int n = 0; n < positions.length; n++) {
-        //    outputFile.println(times[n]/86400 + "," + positions[n][0]/ (148.28e9) + "," + positions[n][1]/ (148.28e9) + "," + positions[n][2]/ (148.28e9));
-        //} //also do stuff to this with indexes
-        
         //end NEW loop
         
         outputFile.close(); // close the outputFile (stream)
@@ -142,6 +134,7 @@ public class Data {
         }
         outputFile.println(String.format("Iterations,%d", I));
         outputFile.println(String.format("Steps per iteration,%d", N));
+        outputFile.println(String.format("Timestep,%g, [Seconds]", timestep));
         outputFile.println(String.format("Total Asteroids,%d", A));
         // First, write out the first line (the column headings for the CSV)
         outputFile.print(",");
@@ -156,8 +149,6 @@ public class Data {
                 
         //add a loop for x, y and z to include and index, string.fomat
         //start NEW loop
-        //outputFile.print("x % [Au], y % [Au], z % [Au]"); // put indexes in at % signs, string.format
-        
         // Now make a loop to write the contents of the data to a CSV.
         
         for (int i = 0; i < I; i++) {
@@ -184,11 +175,7 @@ public class Data {
         outputFile.print("Total,");
         for (int i = 0; i < totalH.length; i++){
             outputFile.print(totalH[i] + "," + totalM[i] + ",");
-        }        
-        //for (int n = 0; n < positions.length; n++) {
-        //    outputFile.println(times[n]/86400 + "," + positions[n][0]/ (148.28e9) + "," + positions[n][1]/ (148.28e9) + "," + positions[n][2]/ (148.28e9));
-        //} //also do stuff to this with indexes
-        
+        }
         //end NEW loop
         
         outputFile.close(); // close the outputFile (stream)

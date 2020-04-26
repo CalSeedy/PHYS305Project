@@ -34,74 +34,7 @@ public class RunSimulationRealTime extends PApplet {
     public void setup() {
         surface.setTitle("Simulation");
         surface.setResizable(true);
-        //frameRate(30);
-        /*
-        // load all the data from the files into the premade arrays "pos" and "times"
-        // should be noted that the data is stored as floats, so there is lossy conversion
-        // (Processing doesnt use doubles if I recall correctly)
-        for (int i = 0; i < files.length; i++){
-            try {
-                BufferedReader csvReader = new BufferedReader(new FileReader(files[i]));
-                String row;
-                int c = 0;
-                while ((row = csvReader.readLine()) != null) {
-                    if (c != 0){
-                        String[] input = row.split(",");
-                        float t = new Float(input[0]);
-                        float x = new Float(input[1]);
-                        float y = new Float(input[2]);
-                        float z = new Float(input[3]);
-
-                        times[c-1] = t;
-                        float[] position = {x, y, z};
-                        //System.out.println(String.format("%d Pos: (%f, %f, %f)", c-1, x, y, z));
-                        pos[c-1][i] = position;
-                    }
-                    c++;
-                }
-                csvReader.close();
-            } catch (IOException ex) {
-                Logger.getLogger(RunSimulation.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        */
-        
-        
-        
-        
         sys = new SolarSystem(); //initialising the solar sys. Ceating a box
-        
-        
-        /*
-        Random r = new Random();
-        for (int i = 0; i < 10; i++){
-            double[] pos = {r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10};
-            double[] vel = {r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10};
-            String name = String.format("Object%d", i);
-            Body bod = new Body(pos, vel, 0., 0, name);
-            sys.addObject(bod);
-        }*/
-        
-        
-        /*
-        double[] E_pos = {1.495978707e11, 0., 0.}; //position of Earth m = radius or orbit
-        double[] E_vel = {0., 29.78e3, 0.}; 
-        
-        double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
-        double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
-              
-             
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
-        sys.addObject(Earth); //adding eath to the solar sys. Creaes a sun in the middle too
-        
-        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
-        sys.addObject(Jupiter); //adding Jupiter to the solar system
-        */
-        
         
         //double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
         //double[] F_vel = {0., 20e3, 0.};
@@ -251,65 +184,6 @@ public class RunSimulationRealTime extends PApplet {
 
         //sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, true);
         sys.generateAsteroidCircle(0.,0.,0., 1.5*rJ, 1000, false);
-        //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
-        //sys.addObject(Fatty); //adding Fatty to the solar system
-        /*
-        for (int i = 0; i < n; i++){
-            
-            if (i % 1000 == 0){
-                System.out.println(i);
-            }
-            for (Body object : sys.getObjects()){
-                
-                
-                double[] objPos = object.getPosition();
-                double[] objVel = object.getVelocity();
-                
-                if (i % 1000 == 0){
-                
-                System.out.println(String.format(
-                        "Object: %s | Pos: {%g, %g, %g} m | Vel: {%g, %g, %g} ms^-1", 
-                        object.name, objPos[0], objPos[1], objPos[2], objVel[0], objVel[1], objVel[2])    
-                );
-                }
-            }
-            //sys.stepEuler(timestep); //step using Euler
-            sys.stepRK4(timestep); //step using Euler
-            //put NEW for loop here
-            //for (int j = 0; j < sys.getObjects().length-1; j++)){
-            //double[] out = sys.getObject(j).getPosition(); //for every j value, find the corresponding object
-            //then store the data in an appropriate array
-            //change Data.java class to put all orbits in one array
-            //for the time being, just store them individually and save o individual csvs
-            //}
-            
-            int S_ind = sys.findObjectIndex("Sun"); //find where the object is in the list
-            double[] S_out = sys.getObject(S_ind).getPosition(); //find where it is in the solar system 
-            storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
-            
-            
-            int E_ind = sys.findObjectIndex("Earth"); //find where the object is in the list
-            double[] E_out = sys.getObject(E_ind).getPosition(); //find where it is in the solar system 
-            storeEarthPos.addData(E_out[0], E_out[1], E_out[2], i); //store the (x,y,z) coordinates
-            
-            int J_ind = sys.findObjectIndex("Jupiter");
-            double[] J_out = sys.getObject(J_ind).getPosition();
-            storeJupiterPos.addData(J_out[0], J_out[1], J_out[2], i);
-
-            int F_ind = sys.findObjectIndex("Fatty");
-            double[] F_out = sys.getObject(F_ind).getPosition();
-            storeFattyPos.addData(F_out[0], F_out[1], F_out[2], i);            
-            //end NEW loop
-        }
-        
-        //storeEarthPos.output();
-        storeSunPos.writeToCSV("Sun_data.csv");
-        storeEarthPos.writeToCSV("Earth_data.csv");
-        storeJupiterPos.writeToCSV("Jupiter_data.csv");
-        storeFattyPos.writeToCSV("Fatty_data.csv");
-        
-        
-        */
         
         sys.genHitArray();
         translate(width/2.0f, height/2.0f);

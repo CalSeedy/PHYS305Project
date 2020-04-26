@@ -3,7 +3,7 @@ package runsimulation;
 import java.util.Random;
 
 public class RunSimulation {
-    final static int ITERATIONS = 20;
+    final static int ITERATIONS = 100;
     final static int STEPS = 4000;
     
     final static double G = 6.67e-11;
@@ -11,7 +11,7 @@ public class RunSimulation {
     public static void main(String[] args) {
         boolean elliptical = false;
         double timestep = 1*(24*60*60);
-        String[] names = {"Sun","Mercury","Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};//"Fatty_data.csv"};
+        String[] names = {"Sun","Mercury","Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
         
         int[] totalHits = new int[names.length];
         for (int item : totalHits){
@@ -23,8 +23,7 @@ public class RunSimulation {
             item = 0;
         }
         
-        
-        int A = 200; // numb of asteroids
+        int A = 250; // numb of asteroids
         double radScale = 5e2; //csaling constant for planet radii
         Data hitData = new Data(names, ITERATIONS, STEPS, timestep);
         for (int k = 0; k < ITERATIONS; k++){
@@ -63,7 +62,7 @@ public class RunSimulation {
             Mars.setEccentricity(0.0934);
             sys.addObject(Mars);
 
-
+            
             double[] J_pos = {7.78574E11, 0., 0.}; //Average
             //double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
             double[] J_vel = {0., 13.07e3, 0.}; //Average velocity
@@ -71,7 +70,7 @@ public class RunSimulation {
             Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, radScale*69911e3, "Jupiter");
             Jupiter.setEccentricity(0.0484);
             sys.addObject(Jupiter); //adding Jupiter to the solar system       
-
+            
 
             double[] S_pos = {14.3353E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
             //double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
@@ -108,13 +107,11 @@ public class RunSimulation {
             sys.addObject(Pluto);
 
             Body[] objs = sys.getObjects();
-            int c = 0;
             for (Body o : objs){
                 if (!(o.name.contains("Asteroid") || o.name.equals("Sun"))){
                     double e = o.getEccentricity();
                     double ap = (1.+e)/(1.-e) * o.getPosition()[0];
                     o.setAphelion(ap);
-                    c++;
                 }
             }
 
@@ -167,9 +164,8 @@ public class RunSimulation {
             double[] pJ = Pluto.getPosition();
             double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
             double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.}
-            sys.generateAsteroidCircle(0.,0.,0., rJ*2, A, false);
+            sys.generateAsteroidCircle(0.,0.,0., rJ*2, A, true);
             sys.genHitArray();
-            //Data storeSystem = new Data(n, timestep, names);
             
             int a = 0;
             System.out.println(String.format("Iteration: %d",k));
@@ -182,7 +178,6 @@ public class RunSimulation {
                 }
                 a++;
             }
-            //sys.Hits.display();
             
             int[] currentHits = sys.Hits.getHits();
             int[] currentMisses = sys.Hits.getMisses();
@@ -205,16 +200,7 @@ public class RunSimulation {
                     
                 }
             }
-            /*
-            for (int i = 0; i < totalHits.length; i++){
-                System.out.println(String.format("%s :  %d (%d)", names[i], totalHits[i], totalMisses[i]));
-            }
-            */
             hitData.addHitData(currentHits, currentMisses, A, k);
-        }
-        
-        for (int i = 0; i < totalHits.length; i++){
-            System.out.println(String.format("%s :  %d (%d)", names[i], totalHits[i], totalMisses[i]));
         }
         hitData.writeHitsToCSV("Hits.csv");
     }

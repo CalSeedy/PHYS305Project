@@ -251,8 +251,6 @@ public class SolarSystem {
 
                         double factor = -G*m2 / (d*d*d);
 
-                        // a12 = -G*m2 / (|r21|)^3 * r21
-
                         accelerations[i][0] += factor * r21[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
                         accelerations[i][1] += factor * r21[1];
                         accelerations[i][2] += factor * r21[2];
@@ -446,17 +444,6 @@ public class SolarSystem {
     // the asteroid is generated with a random position on a unit sphere and always
     // has a velocity towards the Earth
     public void generateAsteroidLine(double x_in, double y_in, double z_in, int thickness, int N, boolean target){
-        /*
-        // Find the object that is the furthest away (that isnt an asteroid)
-        double furthest = 0.;
-        for (Body b : objects){
-            double[] pos = b.getPosition();
-            double distance = magnitude(pos);
-            if ((distance > furthest) && !(b.name.contains("Asteroid"))){
-                furthest = distance;
-            }
-        }
-        */
         Random rand = new Random();
         for (int i = 0; i < N; i++){
             double x, y, z;
