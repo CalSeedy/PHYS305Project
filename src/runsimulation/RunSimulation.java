@@ -3,7 +3,7 @@ package runsimulation;
 import java.util.Random;
 
 public class RunSimulation {
-    final static int ITERATIONS = 10;
+    final static int ITERATIONS = 5;
     final static int STEPS = 5000;
     
     final static double G = 6.67e-11;
@@ -23,6 +23,9 @@ public class RunSimulation {
             item = 0;
         }
         
+        
+        int A = 1000; // numb of asteroids
+        Data hitData = new Data(names, ITERATIONS, STEPS, timestep);
         for (int k = 0; k < ITERATIONS; k++){
             SolarSystem sys = new SolarSystem();
             Hit hits;
@@ -164,7 +167,7 @@ public class RunSimulation {
             double[] pJ = Pluto.getPosition();
             double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
             double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.}
-            sys.generateAsteroidCircle(0.,0.,0., rJ*2, 1000, false);
+            sys.generateAsteroidCircle(0.,0.,0., rJ*2, A, true);
             sys.genHitArray();
             //Data storeSystem = new Data(n, timestep, names);
             
@@ -207,7 +210,13 @@ public class RunSimulation {
                 System.out.println(String.format("%s :  %d (%d)", names[i], totalHits[i], totalMisses[i]));
             }
             */
+            hitData.addHitData(currentHits, currentMisses, A, k);
         }
+        
+        for (int i = 0; i < totalHits.length; i++){
+            System.out.println(String.format("%s :  %d (%d)", names[i], totalHits[i], totalMisses[i]));
+        }
+        hitData.writeHitsToCSV("Hits.csv");
     }
 }
     

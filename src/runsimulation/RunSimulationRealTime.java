@@ -353,7 +353,7 @@ public class RunSimulationRealTime extends PApplet {
                 double[] objPos = obj.getPosition();
                 double[] objVel = obj.getVelocity();
                 if(!obj.isAsteroid){
-                    storeSystem.addData(objPos[0], objPos[1], objPos[2], objVel[0], objVel[1], objVel[2], p, a);
+                    storeSystem.addPosData(objPos[0], objPos[1], objPos[2], objVel[0], objVel[1], objVel[2], p, a);
                     p++;
                 }
                 
@@ -438,7 +438,7 @@ public class RunSimulationRealTime extends PApplet {
             a++;
         // if we have reached the end of the data
         } else {
-            storeSystem.writeToCSV("Simulation.csv");
+            storeSystem.writePosToCSV("Simulation.csv");
             // set the current position to be 0, looping the data
             a = 0;
         }
