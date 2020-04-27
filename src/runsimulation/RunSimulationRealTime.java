@@ -34,85 +34,20 @@ public class RunSimulationRealTime extends PApplet {
     public void setup() {
         surface.setTitle("Simulation");
         surface.setResizable(true);
-        //frameRate(30);
-        /*
-        // load all the data from the files into the premade arrays "pos" and "times"
-        // should be noted that the data is stored as floats, so there is lossy conversion
-        // (Processing doesnt use doubles if I recall correctly)
-        for (int i = 0; i < files.length; i++){
-            try {
-                BufferedReader csvReader = new BufferedReader(new FileReader(files[i]));
-                String row;
-                int c = 0;
-                while ((row = csvReader.readLine()) != null) {
-                    if (c != 0){
-                        String[] input = row.split(",");
-                        float t = new Float(input[0]);
-                        float x = new Float(input[1]);
-                        float y = new Float(input[2]);
-                        float z = new Float(input[3]);
-
-                        times[c-1] = t;
-                        float[] position = {x, y, z};
-                        //System.out.println(String.format("%d Pos: (%f, %f, %f)", c-1, x, y, z));
-                        pos[c-1][i] = position;
-                    }
-                    c++;
-                }
-                csvReader.close();
-            } catch (IOException ex) {
-                Logger.getLogger(RunSimulation.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        */
-        
-        
-        
-        
         sys = new SolarSystem(); //initialising the solar sys. Ceating a box
-        
-        
-        /*
-        Random r = new Random();
-        for (int i = 0; i < 10; i++){
-            double[] pos = {r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10};
-            double[] vel = {r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10,
-                            r.nextDouble()*(10+10) - 10};
-            String name = String.format("Object%d", i);
-            Body bod = new Body(pos, vel, 0., 0, name);
-            sys.addObject(bod);
-        }*/
-        
-        
-        /*
-        double[] E_pos = {1.495978707e11, 0., 0.}; //position of Earth m = radius or orbit
-        double[] E_vel = {0., 29.78e3, 0.}; 
-        
-        double[] J_pos = {7.78574E11, 0., 0.}; //Jupiter's start position
-        double[] J_vel = {0., 13.07e3, 0.}; //Jupiter's velocity
-              
-             
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
-        sys.addObject(Earth); //adding eath to the solar sys. Creaes a sun in the middle too
-        
-        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
-        sys.addObject(Jupiter); //adding Jupiter to the solar system
-        */
-        
         
         //double[] F_pos = {3.495978707e11, 0., 0.}; //position of Fatty m = radius or orbit
         //double[] F_vel = {0., 20e3, 0.};
         //Body Fatty = new Body(F_pos, F_vel, 2.*1.98847e30, 69911e3, "Fatty");
         //system.addObject(Fatty); //adding Fatty to the solar system
-           
-        double[] Mercury_pos = {2.28E11, 0., 0.}; //Mercury semi major axis. Not updated values yet!
+        
+        double radScale = 5e2;
+        
+        double[] Mercury_pos = {5.79E+10, 0., 0.}; //Mercury semi major axis. Not updated values yet!
         //double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
-        double[] Mercury_vel = {0., 24070., 0.};
+        double[] Mercury_vel = {0., 4.74E+04, 0.};
         //double[] Mercury_vel = {0., 26500., 0.}; //Max
-        Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, 2439.7e+3, "Mercury"); //mass, mean radius
+        Body Mercury = new Body(Mercury_pos, Mercury_vel, 3.3011E+23, radScale*2439.7e+3, "Mercury"); //mass, mean radius
         Mercury.setEccentricity(0.2056);
         sys.addObject(Mercury);
 
@@ -121,7 +56,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] V_pos = {1.07E11, 0., 0.}; //Perihelion
         double[] V_vel = {0., 35.02e3, 0.};
         //double[] V_vel = {0., 3.53E+04, 0.}; //Max
-        Body Venus = new Body(V_pos, V_vel, 4.8675E24, 6051.8e3, "Venus"); //mass, mean radius
+        Body Venus = new Body(V_pos, V_vel, 4.8675E24, radScale*6051.8e3, "Venus"); //mass, mean radius
         Venus.setEccentricity(0.0068);
         sys.addObject(Venus);
 
@@ -130,7 +65,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] E_pos = {1.52E11, 0., 0.}; //Perihelion
         double[] E_vel = {0., 29780., 0.}; //Mean. Originally set as 29.78e3 m/s
         //double[] E_vel = {0., 30290., 0.}; //Max
-        Body Earth = new Body(E_pos, E_vel, 5.9722e24, 6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
+        Body Earth = new Body(E_pos, E_vel, 5.9722e24, radScale*6371e3, "Earth"); //start position and velocity, mass and object radius, "name"
         Earth.setEccentricity(0.0167086);
         sys.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
 
@@ -138,7 +73,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
         double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
         //double[] Mars_vel = {0., 2.65E04, 0.}; //Max
-        Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, 3389.5e+3, "Mars"); //mass, mean radius
+        Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, radScale*3389.5e+3, "Mars"); //mass, mean radius
         Mars.setEccentricity(0.0934);
         sys.addObject(Mars);
 
@@ -147,7 +82,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
         double[] J_vel = {0., 13.07e3, 0.}; //Average velocity
         //double[] J_vel = {0., 13.07e3, 0.}; //Max
-        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, 69911e3, "Jupiter");
+        Body Jupiter = new Body(J_pos, J_vel, 1.8976E27, radScale*69911e3, "Jupiter");
         Jupiter.setEccentricity(0.0484);
         sys.addObject(Jupiter); //adding Jupiter to the solar system       
 
@@ -156,7 +91,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
         double[] S_vel = {0., 9680., 0.}; //Mean
         //double[] S_vel = {0., 10180., 0.}; //Max
-        Body Saturn = new Body(S_pos, S_vel, 5.6834E26, 58232E3, "Saturn"); //mass, mean radius
+        Body Saturn = new Body(S_pos, S_vel, 5.6834E26, radScale*58232E3, "Saturn"); //mass, mean radius
         Saturn.setEccentricity(0.0542);
         sys.addObject(Saturn);
 
@@ -165,7 +100,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] U_pos = {2.74E+12, 0., 0.}; //Perihelion
         double[] U_vel = {0., 6.80E3, 0.};
         //double[] U_vel = {0., 7110.0, 0.}; //Max
-        Body Uranus = new Body(U_pos, U_vel, 8.6813E25, 25362E3, "Uranus"); //mass, mean radius
+        Body Uranus = new Body(U_pos, U_vel, 8.6813E25, radScale*25362E3, "Uranus"); //mass, mean radius
         Uranus.setEccentricity(0.0472);
         sys.addObject(Uranus);
 
@@ -174,7 +109,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] N_pos = {444445E+7, 0., 0.}; //Perihelion
         double[] N_vel = {0., 5430., 0.}; //Mean
         //double[] N_vel = {0., 5500., 0.0}; //Max
-        Body Neptune = new Body(N_pos, N_vel, 1.02413E26, 24622000, "Neptune"); //mass, mean radius
+        Body Neptune = new Body(N_pos, N_vel, 1.02413E26, radScale*24622000, "Neptune"); //mass, mean radius
         Neptune.setEccentricity(0.0086);
         sys.addObject(Neptune);
 
@@ -182,7 +117,7 @@ public class RunSimulationRealTime extends PApplet {
         //double[] P_pos = {443682E+7, 0., 0.}; //Perihelion
         double[] P_vel = {0., 4670, 0.}; //Mean
         //double[] P_vel = {0., 6100, 0.}; //Max
-        Body Pluto = new Body(P_pos, P_vel, 1.303E22, 1187000, "Pluto"); //mass, mean radius
+        Body Pluto = new Body(P_pos, P_vel, 1.303E22, radScale*1187000, "Pluto"); //mass, mean radius
         Pluto.setEccentricity(0.2488);
         sys.addObject(Pluto);
         
@@ -243,71 +178,12 @@ public class RunSimulationRealTime extends PApplet {
         }
         
         int thickness = 200;
-        double[] pJ = Jupiter.getPosition();
+        double[] pJ = Pluto.getPosition();
         double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
-        double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.};
+        //double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.};
 
         //sys.generateAsteroidLine(astLine_pos[0], astLine_pos[1], astLine_pos[2], thickness, 100, true);
-        sys.generateAsteroidCircle(0.,0.,0., rJ, 1000, false);
-        //Body Fatty = new Body(F_pos, F_vel, 1e10, 69911e3, "Fatty");
-        //sys.addObject(Fatty); //adding Fatty to the solar system
-        /*
-        for (int i = 0; i < n; i++){
-            
-            if (i % 1000 == 0){
-                System.out.println(i);
-            }
-            for (Body object : sys.getObjects()){
-                
-                
-                double[] objPos = object.getPosition();
-                double[] objVel = object.getVelocity();
-                
-                if (i % 1000 == 0){
-                
-                System.out.println(String.format(
-                        "Object: %s | Pos: {%g, %g, %g} m | Vel: {%g, %g, %g} ms^-1", 
-                        object.name, objPos[0], objPos[1], objPos[2], objVel[0], objVel[1], objVel[2])    
-                );
-                }
-            }
-            //sys.stepEuler(timestep); //step using Euler
-            sys.stepRK4(timestep); //step using Euler
-            //put NEW for loop here
-            //for (int j = 0; j < sys.getObjects().length-1; j++)){
-            //double[] out = sys.getObject(j).getPosition(); //for every j value, find the corresponding object
-            //then store the data in an appropriate array
-            //change Data.java class to put all orbits in one array
-            //for the time being, just store them individually and save o individual csvs
-            //}
-            
-            int S_ind = sys.findObjectIndex("Sun"); //find where the object is in the list
-            double[] S_out = sys.getObject(S_ind).getPosition(); //find where it is in the solar system 
-            storeSunPos.addData(S_out[0], S_out[1], S_out[2], i); //store the (x,y,z) coordinates
-            
-            
-            int E_ind = sys.findObjectIndex("Earth"); //find where the object is in the list
-            double[] E_out = sys.getObject(E_ind).getPosition(); //find where it is in the solar system 
-            storeEarthPos.addData(E_out[0], E_out[1], E_out[2], i); //store the (x,y,z) coordinates
-            
-            int J_ind = sys.findObjectIndex("Jupiter");
-            double[] J_out = sys.getObject(J_ind).getPosition();
-            storeJupiterPos.addData(J_out[0], J_out[1], J_out[2], i);
-
-            int F_ind = sys.findObjectIndex("Fatty");
-            double[] F_out = sys.getObject(F_ind).getPosition();
-            storeFattyPos.addData(F_out[0], F_out[1], F_out[2], i);            
-            //end NEW loop
-        }
-        
-        //storeEarthPos.output();
-        storeSunPos.writeToCSV("Sun_data.csv");
-        storeEarthPos.writeToCSV("Earth_data.csv");
-        storeJupiterPos.writeToCSV("Jupiter_data.csv");
-        storeFattyPos.writeToCSV("Fatty_data.csv");
-        
-        
-        */
+        sys.generateAsteroidCircle(0.,0.,0., 1.5*rJ, 1000, false);
         
         sys.genHitArray();
         translate(width/2.0f, height/2.0f);
@@ -353,7 +229,7 @@ public class RunSimulationRealTime extends PApplet {
                 double[] objPos = obj.getPosition();
                 double[] objVel = obj.getVelocity();
                 if(!obj.isAsteroid){
-                    storeSystem.addData(objPos[0], objPos[1], objPos[2], objVel[0], objVel[1], objVel[2], p, a);
+                    storeSystem.addPosData(objPos[0], objPos[1], objPos[2], objVel[0], objVel[1], objVel[2], p, a);
                     p++;
                 }
                 
@@ -371,18 +247,51 @@ public class RunSimulationRealTime extends PApplet {
                     // set the fill colour to be black
                     fill(165, 42, 42);
                     ellipse(xpos, -ypos, 3*scalePlot, 3*scalePlot);
-                } else if (name.equals("Earth")) {
-                    // fill(red, green, blue, alpha)
-                    // set the fill colour to be black
+               }else if (name.equals("Earth")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
                     fill(101, 215, 255);
-                    ellipse(xpos, -ypos, 5*scalePlot, 5*scalePlot);
-                    
+                    ellipse(xpos, -ypos, 5, 5);
+                }else if (name.equals("Mercury")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(126, 125, 108);
+                    ellipse(xpos, -ypos, 2, 2);
+                }else if (name.equals("Venus")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(251, 189, 195);
+                    ellipse(xpos, -ypos, 5, 5);
+                }else if (name.equals("Mars")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(247, 0, 0);
+                    ellipse(xpos, -ypos, 5, 5);
                 }else if (name.equals("Jupiter")) {
-                    // fill(red, green, blue, alpha)
-                    // set the fill colour to be black
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
                     fill(214, 101, 50);
-                    ellipse(xpos, -ypos, 10*scalePlot, 10*scalePlot);
-                    
+                    ellipse(xpos, -ypos, 10, 10);
+                }else if (name.equals("Saturn")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(249, 212, 80);
+                    ellipse(xpos, -ypos, 8, 8);
+                }else if (name.equals("Uranus")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(147, 212, 180);
+                    ellipse(xpos, -ypos, 7, 7);
+                }else if (name.equals("Neptune")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(120, 114, 180);
+                    ellipse(xpos, -ypos, 7, 7);
+                }else if (name.equals("Pluto")) {
+                 // fill(red, green, blue, alpha)
+                // set the fill colour to be black
+                    fill(127, 114, 42);
+                    ellipse(xpos, -ypos, 3, 3);
                 }else {
                     // fill(red, green, blue, alpha)
                     // set the fill colour to be black
@@ -405,7 +314,7 @@ public class RunSimulationRealTime extends PApplet {
             a++;
         // if we have reached the end of the data
         } else {
-            storeSystem.writeToCSV("Simulation.csv");
+            storeSystem.writePosToCSV("Simulation.csv");
             // set the current position to be 0, looping the data
             a = 0;
         }

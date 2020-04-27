@@ -224,51 +224,6 @@ public class SolarSystem {
         }
         
         time += timestep;
-    }    
-      
-    
-    public void Hit(){
-        int [] hits = new int[objects.length]; //will store the number of hits on each object
-        
-        for (int j = 0; j < objects.length; j++){
-            for (int i = 0; i < objects.length; i++){
-                double d = objects[i].distanceToBody(objects[j]);
-                double radii = objects[i].getRadius() + objects[j].getRadius();
-                if ( d <= radii){
-                    
-                    double m1 = objects[i].getMass();
-                    double m2 = objects[j].getMass();
-                    
-                    if (m1 / m2 > Math.pow(10,6)) { //if m2 is much smaller than m1
-                        //m2 will merge with m1 and transfer its momentum to m1
-
-                        double[] momentum1 = objects[i].getMomentum();
-                        double[] momentum2 = objects[j].getMomentum();
-                        double[] new_momentum =  {0.,0.,0.};
-                        new_momentum[0] = momentum1[0]+momentum2[0];
-                        new_momentum[1] = momentum1[1]+momentum2[1];
-                        new_momentum[2] = momentum1[2]+momentum2[2];
-                    
-                        double new_mass = objects[i].getMass()+objects[j].getMass();
-                    
-                        String name1 = objects[j].getName(); //the names of the objects which have collided
-                        String name2 = objects[i].getName();
-                        objects[j].updateMass(objects[i].getMass());
-                        objects[j].updateVelocity(new_momentum);
-                        removeObject(i);
-
-                        hits[j] ++;
-                        hits[i] ++;
-                    
-                    //update the mass and momentum x of the first body to include the mass of the second
-                    //update the speed of the first body
-                    //delete the seocnd body
-                    //record what body hit what
-                    //or should I just delete the body with 'asteroid' in its name??
-                    }
-                }
-            }
-        }
     }
     
     private double[] fvector(double[][] fullstate){
@@ -295,8 +250,6 @@ public class SolarSystem {
                         double d = Math.sqrt(r21[0]*r21[0] + r21[1]*r21[1] + r21[2]*r21[2]);
 
                         double factor = -G*m2 / (d*d*d);
-
-                        // a12 = -G*m2 / (|r21|)^3 * r21
 
                         accelerations[i][0] += factor * r21[0]; //the acceleration on m1 due to m2 in the x-direction is added on in every loop over j
                         accelerations[i][1] += factor * r21[1];
@@ -471,8 +424,8 @@ public class SolarSystem {
         vz = ((z - E_pos[2])/1e7) * rand.nextGaussian() + ((x - E_pos[2])/1e6);
         double[] a_vel = {vx , vy, vz};
         
-        // set the asteroid's radius such that it is a Gaussian about (50 +/- 30)m
-        double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+        // set the asteroid's radius such that it is a Gaussian about (1000 +/- 100)m
+        double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
         
         // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
         // Volume of a sphere = 4/3 * PI * r^3
@@ -491,17 +444,6 @@ public class SolarSystem {
     // the asteroid is generated with a random position on a unit sphere and always
     // has a velocity towards the Earth
     public void generateAsteroidLine(double x_in, double y_in, double z_in, int thickness, int N, boolean target){
-        /*
-        // Find the object that is the furthest away (that isnt an asteroid)
-        double furthest = 0.;
-        for (Body b : objects){
-            double[] pos = b.getPosition();
-            double distance = magnitude(pos);
-            if ((distance > furthest) && !(b.name.contains("Asteroid"))){
-                furthest = distance;
-            }
-        }
-        */
         Random rand = new Random();
         for (int i = 0; i < N; i++){
             double x, y, z;
@@ -531,7 +473,7 @@ public class SolarSystem {
             }
             
             // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
-            double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+            double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
@@ -571,9 +513,9 @@ public class SolarSystem {
                 vx = (a_pos[0] - E_pos[0])/ 1e8;
                 vy = -(a_pos[1] - E_pos[1])/ 1e8; //+ (0.5*(x - E_pos[1]))/7.78574E11)*1e3 *(rand.nextDouble());
                 vz = 0.;//(a_pos[2] - E_pos[2])/ 1e7;
-                a_vel[0] = vx;
-                a_vel[1] = vy;
-                a_vel[2] = vz;
+                a_vel[0] = vx/10.;
+                a_vel[1] = vy/10.;
+                a_vel[2] = vz/10.;
             } else {
                 vx = -x / 5e7;
                 vy = -y / 5e7;
@@ -585,7 +527,7 @@ public class SolarSystem {
             }
             
             // set the asteroid's radius such that it is a Gaussian about (50 +/- 33)m
-            double a_radius = Math.abs(rand.nextGaussian()*33. + 70.);
+            double a_radius = Math.abs(rand.nextGaussian()*100. + 1000.);
             
             // use Density * Volume to calculate mass; assume Density of asteroids = 5000 kg/m^3
             // Volume of a sphere = 4/3 * PI * r^3
@@ -602,11 +544,14 @@ public class SolarSystem {
     
     
     public void cleanAsteroids(){
+        int idx = findObjectIndex("Pluto");
+        Body p = objects[idx];
+        double r = magnitude(p.getPosition());
         for(Body b : objects){
             if (b.isAsteroid){
                 double[] pos = b.getPosition();
                 double d = magnitude(pos);
-                if (d >= 1.2e13){
+                if (d >= r * 2.5){ // 2.5 * pluto orbit radius
                     removeObject(findObjectIndex(b.name));
                 }
             }
