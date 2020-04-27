@@ -9,6 +9,8 @@ public class Body {
     private double[] periAphelion;
     public String name;                     // name to refer to object
     public boolean isAsteroid = false;
+    public double[] prevPosition;
+    public int orbits;
     
     // empty contructor
     public Body() {
@@ -41,9 +43,11 @@ public class Body {
         position = pos_in;
         velocity = vel_in;
         name = name_in;
+        prevPosition = new double[3];
         periAphelion = new double[2];
         periAphelion[0] = 0.;
         periAphelion[1] = 0.;
+        orbits = 0;
         if (name.contains("Asteroid")){
             isAsteroid = true;
         }
