@@ -4,13 +4,13 @@ import java.util.Random;
 
 public class RunSimulation {
     final static int ITERATIONS = 1;
-    final static int STEPS = 4000;
-    
+    final static int STEPS = 1000; //was 4000 steps
+
     final static double G = 6.67e-11;
     
     public static void main(String[] args) {
         boolean elliptical = false;
-        double timestep = 1*(24*60*60);
+        double timestep = 0.5*(24*60*60); //was 1 day!!
         String[] names = {"Sun","Mercury","Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
         
         int[] totalHits = new int[names.length];
@@ -28,6 +28,8 @@ public class RunSimulation {
         Data hitData = new Data(names, ITERATIONS, STEPS, timestep);
         for (int k = 0; k < ITERATIONS; k++){
             SolarSystem sys = new SolarSystem();
+            
+            
             double[] Mercury_pos = {5.79E+10, 0., 0.}; //Mercury semi major axis. Not updated values yet!
             //double[] Mercury_pos = {2.07E11, 0., 0.}; //Perihelion
             double[] Mercury_vel = {0., 4.74E+04, 0.};
@@ -44,6 +46,8 @@ public class RunSimulation {
             Body Venus = new Body(V_pos, V_vel, 4.8675E24, radScale*6051.8e3, "Venus"); //mass, mean radius
             Venus.setEccentricity(0.0068);
             sys.addObject(Venus);
+            
+            
 
 
             double[] E_pos = {1.495978707e11, 0., 0.}; //Average radius of orbit
@@ -54,6 +58,8 @@ public class RunSimulation {
             Earth.setEccentricity(0.0167086);
             sys.addObject(Earth); //adding eath to the solar system. Creaes a sun in the middle too
 
+            
+            
             double[] Mars_pos = {2.28E11, 0., 0.}; //Mars semi major axis
             //double[] Mars_pos = {2.07E11, 0., 0.}; //Perihelion
             double[] Mars_vel = {0., 24.007e3, 0.}; //Mean
@@ -61,7 +67,7 @@ public class RunSimulation {
             Body Mars = new Body(Mars_pos, Mars_vel, 6.4171E+23, radScale*3389.5e+3, "Mars"); //mass, mean radius
             Mars.setEccentricity(0.0934);
             sys.addObject(Mars);
-
+            
             
             double[] J_pos = {7.78574E11, 0., 0.}; //Average
             //double[] J_pos = {7.78574E11, 0., 0.}; //Perihelion
@@ -71,7 +77,7 @@ public class RunSimulation {
             Jupiter.setEccentricity(0.0484);
             sys.addObject(Jupiter); //adding Jupiter to the solar system       
             
-
+            
             double[] S_pos = {14.3353E11, 0., 0.}; //Saturn semi major axis. Not updated values yet!
             //double[] S_pos = {1.35E12, 0., 0.}; //Perihelion
             double[] S_vel = {0., 9680., 0.}; //Mean
@@ -97,6 +103,8 @@ public class RunSimulation {
             Body Neptune = new Body(N_pos, N_vel, 1.02413E26, radScale*24622000, "Neptune"); //mass, mean radius
             Neptune.setEccentricity(0.0086);
             sys.addObject(Neptune);
+            
+            
 
             double[] P_pos = {59.0638E+11, 0., 0.}; //Semi major axis
             //double[] P_pos = {443682E+7, 0., 0.}; //Perihelion
@@ -105,6 +113,8 @@ public class RunSimulation {
             Body Pluto = new Body(P_pos, P_vel, 1.303E22, radScale*1187000, "Pluto"); //mass, mean radius
             Pluto.setEccentricity(0.2488);
             sys.addObject(Pluto);
+            
+            sys.initPeriods();          
 
             Body[] objs = sys.getObjects();
             for (Body o : objs){
@@ -140,7 +150,7 @@ public class RunSimulation {
                }
 
 
-            } else {
+            }  else {
                for (Body obj : sys.getObjects()){
                    if (!obj.name.equals("Sun")){
                        double randTheta = rand.nextDouble()*2*Math.PI;
@@ -157,8 +167,8 @@ public class RunSimulation {
                        obj.setPosition(newPos[0], newPos[1], newPos[2]);
                        obj.setVelocity(newVel[0], newVel[1], newVel[2]);
                    }
-               }
-            }
+               } 
+            } 
 
             int thickness = 200;
             double rJ;
@@ -178,11 +188,13 @@ public class RunSimulation {
                 sys.Hits.checkHit(sys);
                 sys.stepRK4(timestep);
                 sys.cleanAsteroids();
+                sys.updatePeriods();
                 if (a % 1000 == 0){
                     System.out.println(String.format("\tStep: %d", a));
                 }
                 a++;
             }
+            sys.printPeriods(timestep);
             
             int[] currentHits = sys.Hits.getHits();
             int[] currentMisses = sys.Hits.getMisses();

@@ -24,7 +24,7 @@ public class RunSimulationRealTime extends PApplet {
     // create a 1D array of times
     float[] times = new float[n];
     
-    double timestep = 3*(24*60*60); //
+    double timestep = 0.25*(24*60*60); //
     
     Data storeSystem = new Data(n, timestep, names);
     
@@ -121,6 +121,9 @@ public class RunSimulationRealTime extends PApplet {
         Pluto.setEccentricity(0.2488);
         sys.addObject(Pluto);
         
+        sys.initPeriods();
+      
+        
         Body[] objs = sys.getObjects();
         int k = 0;
         for (Body o : objs){
@@ -134,7 +137,8 @@ public class RunSimulationRealTime extends PApplet {
         
         
         Random rand = new Random();
-        if (elliptical){ // assume position is semi-major axis
+       
+/*        if (elliptical){ // assume position is semi-major axis
             for (Body obj : sys.getObjects()){
                if (!obj.name.equals("Sun")){
                    obj.setPerihelion(obj.getPosition()[0]);
@@ -175,7 +179,7 @@ public class RunSimulationRealTime extends PApplet {
                    obj.setVelocity(newVel[0], newVel[1], newVel[2]);
                }
            }
-        }
+        } */
         
         int thickness = 200;
         double[] pJ = Pluto.getPosition();
@@ -309,6 +313,7 @@ public class RunSimulationRealTime extends PApplet {
             }
             sys.stepRK4(timestep);
             sys.cleanAsteroids();
+            sys.updatePeriods();
             sys.Hits.checkHit(sys);
             // after we display each object, increment the step we are on
             a++;

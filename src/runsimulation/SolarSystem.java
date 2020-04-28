@@ -14,6 +14,7 @@ public class SolarSystem {
     private int astNum = 0;         // store number of asteroids in the system
     public double time = 0.; 
     public Hit Hits;
+    private double[] periods; //keeping track of each planet's period
     
     // blank constructor to initialise the system with a star ("Sun")
     // Sun has the same properties (im SI) as the Sun, from Google
@@ -144,6 +145,51 @@ public class SolarSystem {
         theta = Math.acos((dot(pos1, pos2))/(mag1*mag2));
         
         return theta;
+    }
+    
+    
+    public void initPeriods(){
+        int i = 0;
+        for (Body ob : objects){
+            if (!ob.name.contains("Asteroid") && !ob.name.equals("Sun")){
+                i++;
+            }
+        }
+       
+        periods = new double[i];
+        
+    }
+   
+   
+    public void updatePeriods(){
+        int i = 0;
+        for (Body obj : objects){
+            if (!obj.name.contains("Asteroid") && !obj.name.equals("Sun")){
+                double[] p = obj.getPosition();
+                double[] prevP = obj.prevPosition;
+                //System.out.println(String.format("Previous: %g,%g,%g", prevP[0],prevP[1],prevP[2] ));
+                //System.out.println(String.format("Current: %g,%g,%g", p[0],p[1],p[2] ));
+                if ((prevP[1] > 0) && (p[1] < 0) && (prevP[0] > 0) && (p[0] > 0)){ //prevP1 is y1 p1 is y2
+                    double t = time;    
+                    periods[i] = t - periods[i]; //TIME
+                    obj.orbits++;
+                        
+                } else if ((prevP[1] < 0) && (p[1] > 0) && (prevP[0] > 0) && (p[0] > 0)){ //prevP1 is y1 p1 is y2
+                    double t = time;    
+                    periods[i] = t - periods[i]; //TIME
+                    obj.orbits++;
+                        
+                
+                }
+            }
+            i++;
+        }
+    }
+   
+    public void printPeriods(double timestep){
+        for (int i = 0; i < periods.length; i++){
+            System.out.println(String.format("%s: %f", objects[i+1].name, periods[i]));
+        }
     }
     
     // method to find the index of a Body in bodies through the chosen name
@@ -365,6 +411,10 @@ public class SolarSystem {
         count = 0;
         for (Body obj : objects){
             double[] new_state = state_final[count];
+            double[] prevPosition = obj.getPosition();
+            obj.prevPosition[0] = prevPosition[0];
+            obj.prevPosition[1] = prevPosition[1];
+            obj.prevPosition[2] = prevPosition[2];
             obj.setState(new_state);
             count++;
         }
