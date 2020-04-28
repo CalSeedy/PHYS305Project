@@ -5,7 +5,7 @@ import java.util.Random;
 public class RunSimulation {
     final static int ITERATIONS = 1;
     final static int STEPS = 1000; //was 4000 steps
-    
+
     final static double G = 6.67e-11;
     
     public static void main(String[] args) {
@@ -171,10 +171,14 @@ public class RunSimulation {
             } 
 
             int thickness = 200;
-            double[] pJ = Pluto.getPosition();
-            double rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
-            //double rJ = 1.3e22;
-            double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.}
+            double rJ;
+            try {
+                double[] pJ = Pluto.getPosition();
+                rJ = Math.sqrt(pJ[0]*pJ[0] + pJ[1]*pJ[1] + pJ[2]*pJ[2]);
+                double[] astLine_pos = {0.,0.,0.};//{2.*rJ + thickness, rJ, 0.}
+            } catch (ArrayIndexOutOfBoundsException e){
+                rJ = 1.3e22;
+            }
             sys.generateAsteroidCircle(0.,0.,0., rJ*2, A, false);
             sys.genHitArray();
             

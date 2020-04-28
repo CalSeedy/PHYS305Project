@@ -594,9 +594,15 @@ public class SolarSystem {
     
     
     public void cleanAsteroids(){
-        int idx = findObjectIndex("Pluto");
-        Body p = objects[idx];
-        double r = magnitude(p.getPosition());
+        int idx;
+        double r;
+        try {
+            idx = findObjectIndex("Pluto");
+            Body p = objects[idx];
+            r = magnitude(p.getPosition());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            r = 1.3e22;
+        }
         for(Body b : objects){
             if (b.isAsteroid){
                 double[] pos = b.getPosition();
